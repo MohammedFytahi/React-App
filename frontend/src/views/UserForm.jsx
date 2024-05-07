@@ -14,13 +14,13 @@ export default function UserForm() {
     password_confirmation: ''
   })
   const [errors, setErrors] = useState(null)
-  const [loa    ding, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const {setNotification} = useStateContext()
 
   if (id) {
     useEffect(() => {
       setLoading(true)
-      axiosClient.get(`/users/${id}`)
+      axiosClient.get(`/users/${id}`)   
         .then(({data}) => {
           setLoading(false)
           setUser(data)
