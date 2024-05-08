@@ -8,5 +8,8 @@ class Project extends Model
 {
     protected $fillable = ['name', 'description', 'techno', 'start_date', 'end_date', 'user_id'];
 
-   
+    public function tasks()
+    {
+        return $this->hasMany(Task::class); 
+    }       
 }

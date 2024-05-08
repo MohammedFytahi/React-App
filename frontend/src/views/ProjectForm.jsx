@@ -14,7 +14,7 @@ export default function ProjectForm() {
     techno: "",
     start_date: "",
     end_date: "",
-    user_id: user.id, 
+    user_id: user.id,
   });
   const [errors, setErrors] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ export default function ProjectForm() {
         .get(`/projects/${id}`)
         .then(({ data }) => {
           setLoading(false);
-          setProject(data); 
+          setProject(data);
         })
         .catch(() => {
           setLoading(false);
@@ -37,34 +37,22 @@ export default function ProjectForm() {
 
   const onSubmit = (ev) => {
     ev.preventDefault();
-    const projectData = { ...project, user_id: user.id }; 
-    if (project.id) {
-      axiosClient
-        .put(`/projects/${project.id}`, projectData)
-        .then(() => {
-          setNotification("Project was successfully updated");
-          navigate("/projects");
-        })
-        .catch((err) => {
-          const response = err.response;
-          if (response && response.status === 422) {
-            setErrors(response.data.errors);
-          }
-        });
-    } else {
-      axiosClient
-        .post("/projects", projectData)
-        .then(() => {
-          setNotification("Project was successfully created");
-          navigate("/projects");
-        })
-        .catch((err) => {
-          const response = err.response;
-          if (response && response.status === 422) {
-            setErrors(response.data.errors);
-          }
-        });
-    }
+    const projectData = { ...project, user_id: user.id };
+    const url = project.id ? `/projects/${project.id}` : "/projects";
+    const method = project.id ? "put" : "post";
+
+    axiosClient[method](url, projectData)
+      .then(() => {
+        const message = project.id ? "Project was successfully updated" : "Project was successfully created";
+        setNotification(message);
+        navigate("/projects");
+      })
+      .catch((err) => {
+        const response = err.response;
+        if (response && response.status === 422) {
+          setErrors(response.data.errors);
+        }
+      });
   };
 
   return (
@@ -99,7 +87,10 @@ export default function ProjectForm() {
             <select
               value={project.techno}
               onChange={(ev) =>
-                setProject({ ...project, techno: ev.target.value.toLowerCase() }) // Convertir en minuscules
+                setProject({
+                  ...project,
+                  techno: ev.target.value.toLowerCase(),
+                })
               }
               required
             >
@@ -107,7 +98,7 @@ export default function ProjectForm() {
               <option value="web">Web</option>
               <option value="mobile">Mobile</option>
             </select>
-          
+
             <input type="hidden" name="user_id" value={user.id} />
             <input
               type="date"

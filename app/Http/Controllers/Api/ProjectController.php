@@ -31,7 +31,6 @@ class ProjectController extends Controller
     {
         $data = $request->validated();
         $project = Project::create($data);
-
         return response(new ProjectResource($project), 201);
     }
 
@@ -60,6 +59,17 @@ class ProjectController extends Controller
 
         return new ProjectResource($project);
     }
+/**
+     * Display the tasks associated with the specified project.
+     *
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function tasks(Project $project)
+    {
+        return $project->tasks;
+    }
+    
 
     /**
      * Remove the specified resource from storage.

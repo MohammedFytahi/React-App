@@ -34,10 +34,11 @@ export default function DefaultLayout() {
                 <Link to="/dashboard" style={{ marginTop: '50px' }}>
     <FontAwesomeIcon icon={faTachometerAlt} /> Dashboard
 </Link>
-
+{user.role === 'manager' && (
                 <Link to="/projects">
                     <FontAwesomeIcon icon={faFolder} /> Projects
                 </Link>
+)}
                 <Link to="/users">
                     <FontAwesomeIcon icon={faUser} /> Users
                 </Link>
