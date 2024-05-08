@@ -3,12 +3,12 @@ import { useStateContext } from "../context/ContextProvider";
 import { useEffect } from "react";
 import axiosClient from "../axios-client";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faTachometerAlt, faFolder, faTasks } from '@fortawesome/free-solid-svg-icons'; 
+import { faUser, faTachometerAlt, faFolder, faTasks ,faSignOutAlt} from '@fortawesome/free-solid-svg-icons'; 
 
 
 
 export default function DefaultLayout() {
-    const { user, token, setUser, setToken } = useStateContext();
+    const { user, token, setUser, setToken, notification } = useStateContext();
 
     if (!token) {
         return <Navigate to="/login" />;
@@ -66,13 +66,18 @@ export default function DefaultLayout() {
                                 onClick={onLogout}
                                 className="btn-logout"
                             >
-                                Logout
+                              <FontAwesomeIcon icon={faSignOutAlt} />  Logout
                             </a>
                         </div>
                     </header>
                     <main>
                         <Outlet />
                     </main>
+                    {notification &&
+          <div className="notification">
+            {notification}
+          </div>
+        }
                 </div>
             </div>
         </>

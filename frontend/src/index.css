@@ -37,6 +37,7 @@ input:focus {
 }
 
 .btn,
+.btn-tasks,
 .btn-add,
 .btn-edit,
 .btn-delete {
@@ -59,6 +60,7 @@ input:focus {
 
 .btn-add,
 .btn-edit,
+.btn-tasks,
 .btn-delete{
     padding: 0.5rem 0.75rem;
     font-size: 14px;
@@ -69,6 +71,9 @@ input:focus {
 }
 .btn-delete {
     background-color: #b72424;
+}
+.btn-tasks{
+    background-color: #cfd827;
 }
 
 .btn-logout {

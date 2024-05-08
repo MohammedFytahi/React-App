@@ -6,7 +6,9 @@ import Login from "./views/Login.jsx";
 import NotFound from "./views/NotFound";
 import Signup from "./views/Signup";
 import Users from "./views/Users";
+import Projects from "./views/Projects";
 import UserForm from "./views/UserForm";
+import ProjectForm from "./views/ProjectForm";
 
 const router = createBrowserRouter([
   {
@@ -26,9 +28,22 @@ const router = createBrowserRouter([
         element: <Users/>
       },
       {
+        path: '/projects',
+        element: <Projects/>
+      },
+      {
         path: '/users/new',
         element: <UserForm key="userCreate" />
       },
+      {
+        path: '/projects/new',
+        element: <ProjectForm key="projectCreate" />
+      },
+      {
+        path: '/projects/:id',
+        element: <ProjectForm key="projectUpdate" />
+      },
+      
       {
         path: '/users/:id',
         element: <UserForm key="userUpdate" />

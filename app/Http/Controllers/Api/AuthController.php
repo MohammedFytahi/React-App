@@ -24,7 +24,12 @@ class AuthController extends Controller
         ]);
 
         $token = $user->createToken('main')->plainTextToken;
-        return response(compact('user', 'token'));
+        if ($user->role === 'manager') {
+            return response()->json(['user' => $user, 'token' => $token, 'redirect' => '/dashboard']);
+        } else {
+            return response()->json(['user' => $user, 'token' => $token, 'redirect' => '/users']);
+        }
+
 
     }
 
@@ -39,7 +44,12 @@ class AuthController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $token = $user->createToken('main')->plainTextToken;
-        return response(compact('user', 'token'));
+       
+        if ($user->role === 'manager') {
+            return response()->json(['user' => $user, 'token' => $token, 'redirect' => '/dashboard']);
+        } else {
+            return response()->json(['user' => $user, 'token' => $token, 'redirect' => '/users']);
+        }
 
     }
 
