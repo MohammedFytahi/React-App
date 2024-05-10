@@ -39,6 +39,7 @@ input:focus {
 .btn,
 .btn-tasks,
 .btn-add,
+.btn-assign,
 .btn-edit,
 .btn-delete {
     font-family: "Roboto", sans-serif;
@@ -60,6 +61,7 @@ input:focus {
 
 .btn-add,
 .btn-edit,
+.btn-assign,
 .btn-tasks,
 .btn-delete{
     padding: 0.5rem 0.75rem;
@@ -74,6 +76,9 @@ input:focus {
 }
 .btn-tasks{
     background-color: #cfd827;
+}
+.btn-assign{
+    background-color: #cfd827;;
 }
 
 .btn-logout {
@@ -246,3 +251,42 @@ table > tbody > tr > td {
         transform: translateY(0);
     }
 }
+
+.select-container {
+    position: relative;
+  }
+  
+  .select-container select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+  
+  .select-container::after {
+    content: '\f078'; 
+    font-family: 'Font Awesome 5 Free';
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  
+  .select-container select:hover {
+    border-color: #a5b4fc;
+  }
+  
+  /* Optional focus effect */
+  .select-container select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.125rem rgba(66, 153, 225, 0.25);
+  }
+    

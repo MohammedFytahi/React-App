@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTaskRequest;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Http\Resources\TaskResource;
 use App\Http\Requests\TaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 
 class TaskController extends Controller
 {
@@ -22,12 +24,11 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(TaskRequest $request)
+    public function store(StoreTaskRequest $request)
     {
         $task = Task::create($request->validated());
         return new TaskResource($task);
     }
-
     /**
      * Display the specified resource.
      */
@@ -40,7 +41,7 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(TaskRequest $request, string $id)
+    public function update(UpdateTaskRequest $request, string $id)
     {
         $task = Task::findOrFail($id);
         $task->update($request->validated());
@@ -55,5 +56,11 @@ class TaskController extends Controller
         $task = Task::findOrFail($id);
         $task->delete();
         return response()->json(['message' => 'Task deleted successfully']);
+    }
+
+    public function tasksByProject($projectId)
+    {
+        $tasks = Task::where('project_id', $projectId)->get();
+        return response()->json(['data' => $tasks]);
     }
 }
