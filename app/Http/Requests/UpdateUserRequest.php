@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UpdateUserRequest extends FormRequest
@@ -32,7 +33,11 @@ class UpdateUserRequest extends FormRequest
                 Password::min(8)
                     ->letters()
                     ->symbols(),
-            ]
+            ],
+            'user_type' => [
+                'required',
+                Rule::in(['AS400', 'WEB']), 
+            ],
         ];
     }
 }

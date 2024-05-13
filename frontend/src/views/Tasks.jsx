@@ -1,26 +1,37 @@
+// Import des dépendances nécessaires
 import React, { useState, useEffect } from "react";
 import axiosClient from "../axios-client.js";
 import { Link } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash, faUserPlus, faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import {
+    faEdit,
+    faTrash,
+    faUserPlus,
+    faCaretDown,
+} from "@fortawesome/free-solid-svg-icons";
 
+// Définition du composant
 export default function Tasks() {
+    // Déclaration des états
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(false);
     const { user, setNotification } = useStateContext();
     const [projectId, setProjectId] = useState(null);
     const [projects, setProjects] = useState([]);
     const [assigningTask, setAssigningTask] = useState(null);
-    const [selectedUserId, setSelectedUserId] = useState(null); 
-    const [selectedTaskId, setSelectedTaskId] = useState(null); 
-    const [users, setUsers] = useState([]);
+    const [selectedAs400UserId, setSelectedAs400UserId] = useState(null);
+    const [selectedWebUserId, setSelectedWebUserId] = useState(null);
+    const [as400Users, setAs400Users] = useState([]);
+    const [webUsers, setWebUsers] = useState([]);
 
+    // Effet pour récupérer les tâches et les projets au chargement initial ou lorsqu'un projet est sélectionné
     useEffect(() => {
         getTasks();
         getProjects();
     }, [projectId]);
 
+    // Fonction pour supprimer une tâche
     const onDeleteClick = (task) => {
         if (!window.confirm("Are you sure you want to delete this task?")) {
             return;
@@ -36,6 +47,7 @@ export default function Tasks() {
             });
     };
 
+    // Fonction pour récupérer les tâches depuis le backend
     const getTasks = () => {
         setLoading(true);
         const url = projectId ? `/projects/${projectId}/tasks` : "/tasks";
@@ -51,6 +63,7 @@ export default function Tasks() {
             });
     };
 
+    // Fonction pour récupérer les projets depuis le backend
     const getProjects = () => {
         axiosClient
             .get("/projects")
@@ -62,34 +75,58 @@ export default function Tasks() {
             });
     };
 
+    // Gestionnaire de changement de projet
     const handleProjectChange = (e) => {
         setProjectId(e.target.value);
     };
 
+    // Fonction pour attribuer une tâche à un utilisateur
     const assignTaskToUser = (task) => {
         axiosClient
             .get("/users")
             .then(({ data }) => {
-                setUsers(data.data);
+                const as400Users = data.data.filter(
+                    (user) => user.user_type === "AS400"
+                );
+                const webUsers = data.data.filter(
+                    (user) => user.user_type === "WEB"
+                );
+                setAs400Users(as400Users);
+                setWebUsers(webUsers);
                 setAssigningTask(task);
-                setSelectedTaskId(task.id); 
             })
             .catch((error) => {
                 console.error("Error fetching users:", error);
             });
     };
 
-    const handleAssignUser = (userId) => {
-        if (!userId || !assigningTask) return;
-    
-        const taskId = assigningTask.id; 
+    // Gestionnaire de sélection d'utilisateur AS400
+    const handleAssignAs400User = (userId) => {
+        setSelectedAs400UserId(userId);
+    };
+
+    // Gestionnaire de sélection d'utilisateur Web
+    const handleAssignWebUser = (userId) => {
+        setSelectedWebUserId(userId);
+    };
+
+    // Fonction pour attribuer la tâche à l'utilisateur sélectionné
+    const handleAssignUser = () => {
+        if (!selectedAs400UserId || !selectedWebUserId || !assigningTask)
+            return;
+
+        const taskId = assigningTask.id;
         if (!taskId) {
             console.error("Task ID is missing");
             return;
         }
-    
+
         axiosClient
-            .post(`/tasks/${taskId}/assign`, { user_id: userId, task_id: taskId }) 
+            .post(`/tasks/${taskId}/assign`, {
+                as400_user_id: selectedAs400UserId,
+                web_user_id: selectedWebUserId,
+                task_id: taskId,
+            })
             .then(() => {
                 setNotification("Task assigned successfully");
                 setAssigningTask(null);
@@ -98,13 +135,12 @@ export default function Tasks() {
             .catch((error) => {
                 console.error("Error assigning task:", error);
             });
-    
-        setSelectedUserId(userId);
     };
-    
 
+    // Retourne le JSX du composant
     return (
         <div>
+            {/* Affichage du titre et du bouton d'ajout */}
             <div
                 style={{
                     display: "flex",
@@ -119,6 +155,7 @@ export default function Tasks() {
                     </Link>
                 )}
             </div>
+            {/* Filtrage par projet */}
             <div style={{ marginBottom: "20px" }}>
                 <label htmlFor="project">Filter by Project:</label>
                 <div className="select-container">
@@ -137,6 +174,7 @@ export default function Tasks() {
                     <FontAwesomeIcon icon={faCaretDown} />
                 </div>
             </div>
+            {/* Affichage des tâches */}
             <div className="card animated fadeInDown">
                 <table>
                     <thead>
@@ -166,15 +204,34 @@ export default function Tasks() {
                                     <td>{task.end_date}</td>
                                     {user.role === "manager" && (
                                         <td>
-                                            <Link className="btn-edit" to={`/tasks/${task.id}`}>
-                                                <FontAwesomeIcon icon={faEdit} />
+                                            <Link
+                                                className="btn-edit"
+                                                to={`/tasks/${task.id}`}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faEdit}
+                                                />
                                             </Link>
                                             &nbsp;
-                                            <button className="btn-delete" onClick={() => onDeleteClick(task)}>
-                                                <FontAwesomeIcon icon={faTrash} />
+                                            <button
+                                                className="btn-delete"
+                                                onClick={() =>
+                                                    onDeleteClick(task)
+                                                }
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faTrash}
+                                                />
                                             </button>
-                                            <button className="btn-assign" onClick={() => assignTaskToUser(task)}>
-                                                <FontAwesomeIcon icon={faUserPlus} />
+                                            <button
+                                                className="btn-assign"
+                                                onClick={() =>
+                                                    assignTaskToUser(task)
+                                                }
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faUserPlus}
+                                                />
                                             </button>
                                         </td>
                                     )}
@@ -190,21 +247,45 @@ export default function Tasks() {
                     </tbody>
                 </table>
             </div>
+            {/* Modal pour attribuer la tâche à un utilisateur */}
             {assigningTask && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <h2>Assign Task to User</h2>
-                        <select onChange={(e) => handleAssignUser(e.target.value)}>
-                            <option value="">Select User</option>
-                            {users.map((user) => (
-                                <option key={user.id} value={user.id}>
-                                    {user.name}
-                                </option>
-                            ))}
-                        </select>
-                        <button onClick={() => setAssigningTask(null)}>Cancel</button>
-                    </div>
-                </div>
+                 <div className="modal">
+                 <div className="modal-content">
+                     <h2>Assign Task to User</h2>
+                     {/* Sélecteur pour choisir l'utilisateur AS400 */}
+                     <select
+                         onChange={(e) =>
+                             handleAssignAs400User(e.target.value)
+                         }
+                     >
+                         <option value="">Select AS400 User</option>
+                         {/* Affichage des utilisateurs AS400 */}
+                         {as400Users.map((user) => (
+                             <option key={user.id} value={user.id}>
+                                 {user.name}
+                             </option>
+                         ))}
+                     </select>
+                     {/* Sélecteur pour choisir l'utilisateur Web */}
+                     <select
+                         onChange={(e) =>
+                             handleAssignWebUser(e.target.value)
+                         }
+                     >
+                         <option value="">Select Web User</option>
+                         {webUsers.map((user) => (
+                             <option key={user.id} value={user.id}>
+                                 {user.name}
+                             </option>
+                         ))}
+                     </select>
+                 
+                     <button className="ass_button" onClick={handleAssignUser}>Assign</button>
+                     <button className="cancel_button" onClick={() => setAssigningTask(null)}>
+                         Cancel
+                     </button>
+                 </div>
+             </div>
             )}
         </div>
     );

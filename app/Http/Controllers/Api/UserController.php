@@ -76,4 +76,37 @@ class UserController extends Controller
 
         return response("", 204);
     }
+    /**
+     * Récupère tous les utilisateurs de type AS400.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    /**
+     * Récupère tous les utilisateurs de type AS400.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function as400Users()
+    {
+        return UserResource::collection(User::query()->where('user_type', 'AS400')->orderBy('id', 'desc')->paginate(10));
+    }
+    
+
+    /**
+     * Récupère tous les utilisateurs de type WEB.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function webUsers()
+    {
+        $webUsers = User::where('user_type', 'WEB')->get();
+        return response()->json(['data' => $webUsers], 200);
+    }
+
+    public function getUsersByType($userType)
+    {
+        $users = User::where('user_type', $userType)->get();
+        return response()->json(['data' => $users], 200);
+    }
+    
 }

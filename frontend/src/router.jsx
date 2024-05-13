@@ -1,4 +1,7 @@
-import {createBrowserRouter, Navigate} from "react-router-dom";
+// route.jsx
+
+import React from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Dashboard from "./views/Dashboard.jsx";
 import DefaultLayout from "./components/DefaultLayout";
 import GuestLayout from "./components/GuestLayout";
@@ -45,10 +48,9 @@ const router = createBrowserRouter([
         path: '/tasks/:id',
         element:<TaskForm key="taskUpdate"/>
       },
-
       {
-        path: 'projects/:id/tasks',
-        element: <Projects/>
+        path: '/projects/:id/tasks',
+        element: <Tasks/>
       },
       {
         path: '/users/new',
@@ -62,7 +64,6 @@ const router = createBrowserRouter([
         path: '/projects/:id',
         element: <ProjectForm key="projectUpdate" />
       },
- 
       {
         path: '/users/:id',
         element: <UserForm key="userUpdate" />
@@ -80,6 +81,14 @@ const router = createBrowserRouter([
       {
         path: '/signup',
         element: <Signup/>
+      },
+      {
+        path: '/users/as400',
+        element: <Users userType="AS400" />
+      },
+      {
+        path: '/users/web',
+        element: <Users userType="WEB" />
       }
     ]
   },
@@ -87,6 +96,6 @@ const router = createBrowserRouter([
     path: "*",
     element: <NotFound/>
   }
-])
+]);
 
 export default router;

@@ -10,7 +10,7 @@ use App\Http\Resources\TaskResource;
 use App\Http\Requests\TaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 
-class TaskController extends Controller
+class   TaskController extends Controller
 {
     /**
      * Display a listing of the resource.

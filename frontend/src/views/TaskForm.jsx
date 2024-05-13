@@ -13,15 +13,15 @@ export default function TaskForm() {
     description: "",
     start_date: "",
     end_date: "",
-    project_id: projectId || "", // Utiliser projectId comme valeur par défaut
+    project_id: projectId || "", 
     user_id: user.id,
   });
-  const [projects, setProjects] = useState([]); // State pour stocker la liste des projets
+  const [projects, setProjects] = useState([]); 
   const [errors, setErrors] = useState(null);
   const [loading, setLoading] = useState(false);
   const { setNotification } = useStateContext();
 
-  // Effect pour récupérer la liste des projets
+
   useEffect(() => {
     axiosClient.get('/projects')
       .then(({ data }) => {
