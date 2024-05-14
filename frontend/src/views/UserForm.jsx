@@ -12,7 +12,7 @@ export default function UserForm() {
     email: "",
     password: "",
     password_confirmation: "",
-    user_type: "WEB", // Définir la valeur par défaut à "WEB"
+    user_type: "WEB", 
   });
   const [errors, setErrors] = useState(null);
   const [loading, setLoading] = useState(false);

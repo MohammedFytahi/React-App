@@ -198,7 +198,8 @@ table > tbody > tr > td {
 #defaultLayout aside {
     width: 240px;
     background-color: #5b08a7;
-    padding: 1rem
+    padding: 1rem;
+
 }
 
 #defaultLayout aside > a {
@@ -235,7 +236,7 @@ table > tbody > tr > td {
 .animated {
     -webkit-animation-duration: 0.3s;
     animation-duration: 0.3s;
-    -webkit-animation-fill-mode: both;
+    -webkit-animationill-mode: both;
     animation-fill-mode: both;
 }
 
