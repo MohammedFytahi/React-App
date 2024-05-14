@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,13 +16,16 @@ class TaskUserController extends Controller
             'as400_user_id' => 'required|exists:users,id',
             'web_user_id' => 'required|exists:users,id',
         ]);
-
+    
         $task = Task::findOrFail($request->task_id);
         $as400User = User::findOrFail($request->as400_user_id);
         $webUser = User::findOrFail($request->web_user_id);
-
-        $task->users()->attach([$as400User->id, $webUser->id], ['as400_user_id' => $as400User->id, 'web_user_id' => $webUser->id]);
-
+    
+        // Attach the users to the task
+        $task->users()->sync([$as400User->id => ['web_user_id' => $webUser->id]]);
+    
         return response()->json(['message' => 'Task assigned successfully']);
     }
+    
+    
 }

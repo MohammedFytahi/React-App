@@ -18,9 +18,11 @@ class Task extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class)
-            ->withPivot('as400_user_id', 'web_user_id');
+        return $this->belongsToMany(User::class, 'task_user', 'task_id', 'as400_user_id')
+                    ->withPivot('web_user_id');
     }
+    
+    
     
 
 }

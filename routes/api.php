@@ -4,7 +4,7 @@
     use App\Http\Controllers\Api\ProjectController;
     use App\Http\Controllers\Api\UserController;
     use App\Http\Controllers\Api\TaskController;
-    use App\Http\Controllers\TaskUserController;
+    use App\Http\Controllers\Api\TaskUserController;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Route;
 
