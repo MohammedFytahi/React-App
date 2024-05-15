@@ -9,6 +9,8 @@ use App\Models\Task;
 use App\Http\Resources\TaskResource;
 use App\Http\Requests\TaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class   TaskController extends Controller
 {
@@ -63,5 +65,26 @@ class   TaskController extends Controller
         $tasks = Task::where('project_id', $projectId)->get();
         return response()->json(['data' => $tasks]);
     }
+
+   public function getUserTasks($userId)
+    {
+        try {
+            // Query the task_user pivot table to get the task IDs associated with the user
+            $taskIds = DB::table('task_user')
+                ->where('as400_user_id', $userId)
+                ->orWhere('web_user_id', $userId)
+                ->pluck('task_id');
+
+            // Query the tasks table to get the tasks corresponding to the task IDs
+            $tasks = DB::table('tasks')
+                ->whereIn('id', $taskIds)
+                ->get();
+
+            return response()->json(['data' => $tasks], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch user tasks', 'message' => $e->getMessage()], 500);
+        }
     
+    
+}
 }

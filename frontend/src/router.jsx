@@ -14,6 +14,7 @@ import UserForm from "./views/UserForm";
 import ProjectForm from "./views/ProjectForm";
 import Tasks from "./views/Tasks.jsx";
 import TaskForm from "./views/TaskForm.jsx";
+import UserTasks from "./views/UserTasks.jsx";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
       {
         path: '/projects/:id/tasks',
         element: <Tasks/>
+      },
+      {
+        path: '/usertask',
+        element: <UserTasks/>
       },
       {
         path: '/users/new',

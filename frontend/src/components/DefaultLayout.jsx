@@ -42,9 +42,17 @@ export default function DefaultLayout() {
                 <Link to="/users">
                     <FontAwesomeIcon icon={faUser} /> Users
                 </Link>
-                <Link to="/tasks">
+                {user.role==='manager' &&(
+                     <Link to="/tasks">
                     <FontAwesomeIcon icon={faTasks} /> Tasks
                 </Link>
+                )}
+                {user.role=== 'collaborator' && (
+                    <Link to="/usertask">
+                       <FontAwesomeIcon icon={faTasks} />  My tasks
+                    </Link>
+                )}
+               
                 </aside>
                 <div className="content">
                     <header>

@@ -74,7 +74,7 @@ export default function Tasks() {
     };
 
     const assignTaskToUser = (task) => {
-        // Vérifier si la tâche a déjà des utilisateurs affectés
+
         if (task.users && task.users.length > 0) {
             alert("This task is already assigned to users.");
             return;
@@ -133,7 +133,6 @@ export default function Tasks() {
     };
 
     const handleAssignedTaskClick = (task) => {
-        // Afficher un message à l'utilisateur
         alert(`This task is already assigned to users.`);
     };
 

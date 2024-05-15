@@ -30,17 +30,13 @@
         Route::apiResource('/tasks', TaskController::class);
         Route::get('/projects/{projectId}/tasks', [TaskController::class, 'tasksByProject']);
         Route::post('/tasks/{taskId}/assign', [TaskUserController::class, 'assignTask']);
-        // Route::get('/users/as400', [UserController::class, 'as400Users']);
 
-        // Route::get('/users/{userType?}', [UserController::class, 'index']);
-        // Route::get('/users/AS400', [UserController::class, 'index']);
-        // Route::get('/users/WEB', [UserController::class, 'index']);
         Route::get('/users/as400', [UserController::class, 'as400Users']);
         Route::get('/users/web', [UserController::class, 'webUsers']);
         Route::get('/users/{userType}', [UserController::class, 'getUsersByType']);
 
         
-    
+        Route::get('/users/{userId}/tasks', [TaskController::class, 'getUserTasks']);
 
 
     });
