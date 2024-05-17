@@ -22,6 +22,7 @@ export default function Tasks() {
     const [selectedWebUserId, setSelectedWebUserId] = useState(null);
     const [as400Users, setAs400Users] = useState([]);
     const [webUsers, setWebUsers] = useState([]);
+    const [taskAssigned, setTaskAssigned] = useState(false);
 
     useEffect(() => {
         getTasks();
@@ -74,12 +75,10 @@ export default function Tasks() {
     };
 
     const assignTaskToUser = (task) => {
-
-        if (task.users && task.users.length > 0) {
+        if (taskAssigned) {
             alert("This task is already assigned to users.");
             return;
         }
-
         axiosClient
             .get("/users")
             .then(({ data }) => {
@@ -126,6 +125,7 @@ export default function Tasks() {
                 setNotification("Task assigned successfully");
                 setAssigningTask(null);
                 getTasks();
+                setTaskAssigned(true);
             })
             .catch((error) => {
                 console.error("Error assigning task:", error);
@@ -218,8 +218,7 @@ export default function Tasks() {
                                                     icon={faTrash}
                                                 />
                                             </button>
-                                            {task.users &&
-                                            task.users.length > 0 ? (
+                                            {taskAssigned ? (
                                                 <button
                                                     className="btn-assigned"
                                                     onClick={() =>

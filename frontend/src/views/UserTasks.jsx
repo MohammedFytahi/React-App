@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import axiosClient from "../axios-client.js";
-import PropTypes from "prop-types"; // Import PropTypes
+import PropTypes from "prop-types"; 
 
 export default function UserTasks() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState(null); // State to hold the authenticated user's ID
+  const [userId, setUserId] = useState(null); 
 
   useEffect(() => {
     const token = localStorage.getItem('ACCESS_TOKEN');

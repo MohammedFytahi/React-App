@@ -359,3 +359,93 @@ table > tbody > tr > td {
   .fin{
     display: flex;
   }
+
+  .break-word {
+    word-wrap: break-word;
+}
+
+
+/* Dashboard.css */
+
+.dashboard {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+.dashboard h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.dashboard .stats-section,
+.dashboard .tasks-section {
+    margin-bottom: 30px;
+}
+
+.dashboard .card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+}
+
+.dashboard .card-icon {
+    font-size: 2em;
+    margin-right: 20px;
+    color: #007bff;
+}
+
+.dashboard .card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard .card-title {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.dashboard .card-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #555;
+}
+
+.dashboard ul {
+    list-style: none;
+    padding: 0;
+}
+
+.dashboard ul li {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.dashboard ul li ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.dashboard ul li ul li {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 8px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+}
+
+.loading {
+    text-align: center;
+    font-size: 1.2em;
+    color: #777;
+}

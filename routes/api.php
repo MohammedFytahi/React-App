@@ -34,7 +34,10 @@
         Route::get('/users/as400', [UserController::class, 'as400Users']);
         Route::get('/users/web', [UserController::class, 'webUsers']);
         Route::get('/users/{userType}', [UserController::class, 'getUsersByType']);
+        
 
+         Route::get('/project-stats', [ProjectController::class, 'getProjectStats']);
+         Route::get('/user-tasks', [TaskController::class, 'getStatTasks']);
         
         Route::get('/users/{userId}/tasks', [TaskController::class, 'getUserTasks']);
 

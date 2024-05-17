@@ -7,6 +7,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -111,5 +112,6 @@ class UserController extends Controller
         $users = User::where('user_type', $userType)->get();
         return response()->json(['data' => $users], 200);
     }
+   
     
 }

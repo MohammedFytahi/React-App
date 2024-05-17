@@ -69,13 +69,12 @@ class   TaskController extends Controller
    public function getUserTasks($userId)
     {
         try {
-            // Query the task_user pivot table to get the task IDs associated with the user
+      
             $taskIds = DB::table('task_user')
                 ->where('as400_user_id', $userId)
                 ->orWhere('web_user_id', $userId)
                 ->pluck('task_id');
 
-            // Query the tasks table to get the tasks corresponding to the task IDs
             $tasks = DB::table('tasks')
                 ->whereIn('id', $taskIds)
                 ->get();
@@ -87,4 +86,61 @@ class   TaskController extends Controller
     
     
 }
+
+public function getStatTasks()
+{
+    try {
+        // Récupérer les utilisateurs AS400 et leurs tâches associées
+        $as400UsersWithTasks = DB::table('users')
+            ->join('task_user', 'users.id', '=', 'task_user.as400_user_id')
+            ->join('tasks', 'task_user.task_id', '=', 'tasks.id')
+            ->select('users.id as user_id', 'users.name as user_name', 'tasks.id as task_id', 'tasks.name as task_name')
+            ->get()
+            ->groupBy('user_id');
+
+        // Récupérer les utilisateurs WEB et leurs tâches associées
+        $webUsersWithTasks = DB::table('users')
+            ->join('task_user', 'users.id', '=', 'task_user.web_user_id')
+            ->join('tasks', 'task_user.task_id', '=', 'tasks.id')
+            ->select('users.id as user_id', 'users.name as user_name', 'tasks.id as task_id', 'tasks.name as task_name')
+            ->get()
+            ->groupBy('user_id');
+
+        // Formater les données pour les utilisateurs AS400
+        $formattedAs400Data = [];
+        foreach ($as400UsersWithTasks as $userId => $tasks) {
+            $userName = $tasks->first()->user_name;
+            $taskList = $tasks->map(function($task) {
+                return ['id' => $task->task_id, 'name' => $task->task_name];
+            })->toArray();
+
+            $formattedAs400Data[] = [
+                'id' => $userId,
+                'name' => $userName,
+                'tasks' => $taskList
+            ];
+        }
+
+        // Formater les données pour les utilisateurs WEB
+        $formattedWebData = [];
+        foreach ($webUsersWithTasks as $userId => $tasks) {
+            $userName = $tasks->first()->user_name;
+            $taskList = $tasks->map(function($task) {
+                return ['id' => $task->task_id, 'name' => $task->task_name];
+            })->toArray();
+
+            $formattedWebData[] = [
+                'id' => $userId,
+                'name' => $userName,
+                'tasks' => $taskList
+            ];
+        }
+
+        return response()->json(['as400Users' => $formattedAs400Data, 'webUsers' => $formattedWebData], 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Failed to fetch user tasks', 'message' => $e->getMessage()], 500);
+    }
+}
+
+
 }

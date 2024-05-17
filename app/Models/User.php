@@ -29,7 +29,7 @@ class User extends Authenticatable
 
     public function tasks()
     {
-        return $this->belongsToMany(Task::class)
-            ->withPivot('as400_user_id', 'web_user_id');
+        return $this->hasMany(Task::class);
     }
+    
 }

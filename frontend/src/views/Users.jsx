@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import axiosClient from "../axios-client.js";
 import { Link } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider.jsx";
@@ -73,14 +73,15 @@ export default function Users({ userType }) {
                 )}
             </div>
             <div>
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Search by name"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                    />
-                    <button className="button-90" onClick={() => getUsers()}>
+                <div
+                 style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                }}>
+
+<div>
+                         <button className="button-90" onClick={() => getUsers()}>
                         All
                     </button>
                     <button
@@ -95,6 +96,16 @@ export default function Users({ userType }) {
                     >
                         WEB
                     </button>
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Search by name"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        style={{width:300,}}
+                    />
+                   
+                   
                 </div>
             </div>
             <div className="card animated fadeInDown">

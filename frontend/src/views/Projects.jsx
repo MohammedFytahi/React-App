@@ -43,6 +43,14 @@ export default function Projects() {
             });
     };
 
+    const limitWords = (text, limit) => {
+        const words = text.split(" ");
+        if (words.length > limit) {
+            return words.slice(0, limit).join(" ") + "...";
+        }
+        return text;
+    };
+
     return (
         <div>
             <div
@@ -86,7 +94,7 @@ export default function Projects() {
                                 <tr key={project.id}>
                                     <td>{project.id}</td>
                                     <td>{project.name}</td>
-                                    <td>{project.description}</td>
+                                    <td>{limitWords(project.description, 10)}</td>
                                     <td>{project.techno}</td>
                                     <td>{project.start_date}</td>
                                     <td>{project.end_date}</td>

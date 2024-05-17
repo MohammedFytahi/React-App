@@ -7,6 +7,7 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
+use App\Models\Task;
 
 class ProjectController extends Controller
 {
@@ -83,5 +84,16 @@ class ProjectController extends Controller
 
         return response("", 204);
     }
+    public function getProjectStats()
+    {
+        $totalProjects = Project::count();
+        $totalTasks = Task::count();
+    
+        return response()->json([
+            'totalProjects' => $totalProjects,
+            'totalTasks' => $totalTasks,
+        ]);
+    }
 }
 
+    
