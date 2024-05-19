@@ -3,9 +3,7 @@ import { useStateContext } from "../context/ContextProvider";
 import { useEffect } from "react";
 import axiosClient from "../axios-client";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faTachometerAlt, faFolder, faTasks ,faSignOutAlt} from '@fortawesome/free-solid-svg-icons'; 
-
-
+import { faUser, faTachometerAlt, faFolder, faTasks, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
 export default function DefaultLayout() {
     const { user, token, setUser, setToken, notification } = useStateContext();
@@ -13,6 +11,7 @@ export default function DefaultLayout() {
     if (!token) {
         return <Navigate to="/login" />;
     }
+
     const onLogout = (ev) => {
         ev.preventDefault();
         axiosClient.post("/logout").then(() => {
@@ -31,62 +30,56 @@ export default function DefaultLayout() {
         <>
             <div id="defaultLayout">
                 <aside>
-                <Link to="/dashboard" style={{ marginTop: '50px' }}>
-    <FontAwesomeIcon icon={faTachometerAlt} /> Dashboard
-</Link>
-{user.role === 'manager' && (
-                <Link to="/projects">
-                    <FontAwesomeIcon icon={faFolder} /> Projects
-                </Link>
-)}
-                <Link to="/users">
-                    <FontAwesomeIcon icon={faUser} /> Users
-                </Link>
-                {user.role==='manager' &&(
-                     <Link to="/tasks">
-                    <FontAwesomeIcon icon={faTasks} /> Tasks
-                </Link>
-                )}
-                {user.role=== 'collaborator' && (
-                    <Link to="/usertask">
-                       <FontAwesomeIcon icon={faTasks} />  My tasks
+                    <Link to="/dashboard" className="nav-link">
+                        <FontAwesomeIcon icon={faTachometerAlt} /> Dashboard
                     </Link>
-                )}
-               
+                    {user.role === 'manager' && (
+                        <Link to="/projects" className="nav-link">
+                            <FontAwesomeIcon icon={faFolder} /> Projects
+                        </Link>
+                    )}
+                    <Link to="/users" className="nav-link">
+                        <FontAwesomeIcon icon={faUser} /> Users
+                    </Link>
+                    {user.role === 'manager' && (
+                        <Link to="/tasks" className="nav-link">
+                            <FontAwesomeIcon icon={faTasks} /> Tasks
+                        </Link>
+                    )}
+                    {user.role === 'collaborator' && (
+                        <Link to="/usertask" className="nav-link">
+                            <FontAwesomeIcon icon={faTasks} /> My tasks
+                        </Link>
+                    )}
                 </aside>
                 <div className="content">
                     <header>
-                        <div>
+                        <div className="header-logo">
                             <img
                                 src="images/axa.png"
-                                alt=""
-                                style={{ width: 100 }}
-                            ></img>
+                                alt="Logo"
+                                className="logo-img"
+                            />
                         </div>
-                        <div>{user.name}</div>
+                        <div className="header-user">{user.name}</div>
                         <div>
                             <a
                                 href="#"
-                                style={{
-                                    backgroundColor: "red",
-                                    transition: "transform 0.2s",
-                                    display: "inline-block",
-                                }}
                                 onClick={onLogout}
                                 className="btn-logout"
                             >
-                              <FontAwesomeIcon icon={faSignOutAlt} />  Logout
+                                <FontAwesomeIcon icon={faSignOutAlt} /> Logout
                             </a>
                         </div>
                     </header>
                     <main>
                         <Outlet />
                     </main>
-                    {notification &&
-          <div className="notification">
-            {notification}
-          </div>
-        }
+                    {notification && (
+                        <div className="notification">
+                            {notification}
+                        </div>
+                    )}
                 </div>
             </div>
         </>

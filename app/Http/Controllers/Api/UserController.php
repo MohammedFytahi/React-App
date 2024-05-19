@@ -89,10 +89,13 @@ class UserController extends Controller
      */
     public function as400Users()
     {
-        $users = User::where('user_type', 'AS400')->get();
+        $users = User::where('user_type', 'AS400')->orderBy('id', 'desc')->paginate(10);
         return UserResource::collection($users);
     }
-    
+
+
+
+   
     
 
     /**
@@ -102,15 +105,14 @@ class UserController extends Controller
      */
     public function webUsers()
     {
-        $webUsers = User::where('user_type', 'WEB')->get();
-       
-        return response()->json(['data' => $webUsers], 200);
+        $users = User::where('user_type', 'WEB')->orderBy('id', 'desc')->paginate(10);
+        return UserResource::collection($users);
     }
 
     public function getUsersByType($userType)
     {
-        $users = User::where('user_type', $userType)->get();
-        return response()->json(['data' => $users], 200);
+        $users = User::where('user_type', $userType)->orderBy('id', 'desc')->paginate(10);
+        return UserResource::collection($users);
     }
    
     

@@ -1,8 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap');
 
 * {
     box-sizing: border-box;
 }
+
 html, body, #root, #defaultLayout, #guestLayout {
     min-height: 100vh;
 }
@@ -20,7 +21,7 @@ body {
     background-color: #f6f6f6;
 }
 
-input,select {
+input, select {
     outline: 0;
     background: #ffffff;
     width: 100%;
@@ -32,10 +33,7 @@ input,select {
     transition: all 0.3s;
 }
 
-input:focus {
-    border-color: #5b08a7;
-}
-select:focus{
+input:focus, select:focus {
     border-color: #5b08a7;
 }
 
@@ -53,8 +51,7 @@ select:focus{
     padding: 15px;
     color: #FFFFFF;
     font-size: 16px;
-    -webkit-transition: all 0.3 ease;
-    transition: all 0.3 ease;
+    transition: all 0.3s;
     cursor: pointer;
 }
 
@@ -66,7 +63,7 @@ select:focus{
 .btn-edit,
 .btn-assign,
 .btn-tasks,
-.btn-delete{
+.btn-delete {
     padding: 0.5rem 0.75rem;
     font-size: 14px;
     border-radius: 4px;
@@ -77,11 +74,11 @@ select:focus{
 .btn-delete {
     background-color: #b72424;
 }
-.btn-tasks{
+.btn-tasks {
     background-color: #cfd827;
 }
-.btn-assign{
-    background-color: #cfd827;;
+.btn-assign {
+    background-color: #cfd827;
 }
 
 .btn-logout {
@@ -90,15 +87,10 @@ select:focus{
     color: #212121;
     transition: all 0.3s;
     border-radius: 6px;
+    background-color: red;
 }
 .btn-logout:hover {
     background-color: rgba(0, 0, 0, 0.1);
-}
-
-.btn:hover,
-.btn:active,
-.btn:focus {
-    background: #5b08a7;
 }
 
 .text-center {
@@ -151,8 +143,7 @@ table > tbody > tr > td {
     border-radius: 0.5rem;
 }
 
-/* Login/Signup forms*/
-
+/* Login/Signup forms */
 .login-signup-form {
     height: 100vh;
     display: flex;
@@ -188,9 +179,7 @@ table > tbody > tr > td {
     text-decoration: none;
 }
 
-/* Login/Signup form */
-
-
+/* Layout styles */
 #defaultLayout {
     display: flex;
 }
@@ -199,49 +188,80 @@ table > tbody > tr > td {
     width: 240px;
     background-color: #5b08a7;
     padding: 1rem;
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-y: auto;
 }
 
-#defaultLayout aside > a {
-    display: block;
+#defaultLayout aside .nav-link {
+    display: flex;
+    align-items: center;
     padding: 0.75rem 1rem;
     border-radius: 6px;
     color: white;
     text-decoration: none;
     transition: all 0.2s;
+    width: 100%;
+    margin-bottom: 0.5rem;
 }
 
-#defaultLayout aside > a:hover {
+#defaultLayout aside .nav-link:hover {
     background-color: rgba(0, 0, 0, 0.2);
+}
+#defaultLayout aside .nav-link.active {
+    background-color: #333; /* ou la couleur de votre choix */
+    font-weight: bold;
+    color: white;
 }
 
 #defaultLayout .content {
+    margin-left: 240px;
     flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 #defaultLayout header {
     height: 80px;
-    padding: 2rem 3rem;
+    padding: 1rem 3rem;
     background-color: white;
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: fixed;
+    top: 0;
+    left: 240px;
+    right: 0;
+    z-index: 1000;
+}
+
+#defaultLayout header .logo-img {
+    width: 100px;
+}
+
+#defaultLayout header .header-user {
+    font-size: 1.2em;
+    color: #333;
 }
 
 #defaultLayout main {
     padding: 2rem;
+    margin-top: 80px; /* height of the header */
 }
 
 .animated {
-    -webkit-animation-duration: 0.3s;
     animation-duration: 0.3s;
-    -webkit-animationill-mode: both;
     animation-fill-mode: both;
 }
 
 .fadeInDown {
-    -webkit-animation-name: fadeInDown;
     animation-name: fadeInDown;
 }
 
@@ -258,12 +278,10 @@ table > tbody > tr > td {
 
 .select-container {
     position: relative;
-  }
-  
-  .select-container select {
+}
+
+.select-container select {
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
     background-color: #f3f4f6;
     border: 1px solid #d1d5db;
     border-radius: 0.25rem;
@@ -271,9 +289,9 @@ table > tbody > tr > td {
     font-size: 1rem;
     line-height: 1.5;
     cursor: pointer;
-  }
-  
-  .select-container::after {
+}
+
+.select-container::after {
     content: '\f078'; 
     font-family: 'Font Awesome 5 Free';
     position: absolute;
@@ -281,19 +299,19 @@ table > tbody > tr > td {
     right: 0.75rem;
     transform: translateY(-50%);
     pointer-events: none;
-  }
-  
-  .select-container select:hover {
+}
+
+.select-container select:hover {
     border-color: #a5b4fc;
-  }
-  
-  /* Optional focus effect */
-  .select-container select:focus {
+}
+
+.select-container select:focus {
     outline: none;
     border-color: #2563eb;
     box-shadow: 0 0 0 0.125rem rgba(66, 153, 225, 0.25);
-  }
-  .button-90 {
+}
+
+.button-90 {
     color: #fff;
     padding: 15px 25px;
     border-radius: 100px;
@@ -302,23 +320,16 @@ table > tbody > tr > td {
     box-shadow: 2px 19px 31px rgba(0, 0, 0, 0.2);
     font-weight: bold;
     font-size: 10px;
-  
-  
     border: 0;
-  
     user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-  
     cursor: pointer;
-  }
-  .button-90.button-90:hover {
+}
+
+.button-90:hover {
     background-color: #f2343e;
-   
-  }
+}
 
-
-  .ass_button{
+.ass_button {
     color: #fff;
     padding: 15px 25px;
     border-radius: 100px;
@@ -327,17 +338,12 @@ table > tbody > tr > td {
     box-shadow: 2px 19px 31px rgba(0, 0, 0, 0.2);
     font-weight: bold;
     font-size: 10px;
-  
     border: 0;
-  
     user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-  
     cursor: pointer;
-  }
+}
 
-  .cancel_button{
+.cancel_button {
     color: #fff;
     padding: 15px 25px;
     border-radius: 100px;
@@ -346,24 +352,18 @@ table > tbody > tr > td {
     box-shadow: 2px 19px 31px rgba(0, 0, 0, 0.2);
     font-weight: bold;
     font-size: 10px;
-  
     border: 0;
-  
     user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-  
     cursor: pointer;
-  }
-
-  .fin{
-    display: flex;
-  }
-
-  .break-word {
-    word-wrap: break-word;
 }
 
+.fin {
+    display: flex;
+}
+
+.break-word {
+    word-wrap: break-word;
+}
 
 /* Dashboard.css */
 
@@ -448,4 +448,7 @@ table > tbody > tr > td {
     text-align: center;
     font-size: 1.2em;
     color: #777;
+}
+.nav-link.active {
+    background-color: #333; /* ou la couleur de votre choix */
 }
