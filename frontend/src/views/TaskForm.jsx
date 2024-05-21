@@ -13,14 +13,14 @@ export default function TaskForm() {
     description: "",
     start_date: "",
     end_date: "",
-    project_id: projectId || "", 
+    project_id: projectId || "",
     user_id: user.id,
   });
-  const [projects, setProjects] = useState([]); 
+  const [projects, setProjects] = useState([]);
+  const [projectDates, setProjectDates] = useState({ start_date: "", end_date: "" });
   const [errors, setErrors] = useState(null);
   const [loading, setLoading] = useState(false);
   const { setNotification } = useStateContext();
-
 
   useEffect(() => {
     axiosClient.get('/projects')
@@ -47,8 +47,35 @@ export default function TaskForm() {
     }
   }, [task.id]);
 
+  useEffect(() => {
+    if (task.project_id) {
+      const selectedProject = projects.find(project => project.id === parseInt(task.project_id));
+      if (selectedProject) {
+        setProjectDates({
+          start_date: selectedProject.start_date,
+          end_date: selectedProject.end_date,
+        });
+      }
+    }
+  }, [task.project_id, projects]);
+
   const onSubmit = (ev) => {
     ev.preventDefault();
+
+    // Validation des dates
+    if (task.start_date < projectDates.start_date || task.start_date > projectDates.end_date) {
+      setErrors({ start_date: ["Start date must be within the project's date range."] });
+      return;
+    }
+    if (task.end_date < projectDates.start_date || task.end_date > projectDates.end_date) {
+      setErrors({ end_date: ["End date must be within the project's date range."] });
+      return;
+    }
+    if (task.start_date > task.end_date) {
+      setErrors({ end_date: ["End date must be after the start date."] });
+      return;
+    }
+
     const taskData = { ...task, user_id: user.id };
     const url = task.id ? `/tasks/${task.id}` : "/tasks";
     const method = task.id ? "put" : "post";

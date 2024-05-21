@@ -54,6 +54,34 @@ input:focus, select:focus {
     transition: all 0.3s;
     cursor: pointer;
 }
+.card-icon{
+    font-family: "Roboto", sans-serif;
+    font-size: 20px;
+  
+    color: #d0dc4b;
+   
+}
+.card-icon0{
+    font-family: "Roboto", sans-serif;
+    font-size: 20px;
+  
+    color: #38bf19;
+   
+}
+.card-icon1{
+    font-family: "Roboto", sans-serif;
+    font-size: 20px;
+  
+    color: #ba3209;
+   
+}
+.card-icon2{
+    font-family: "Roboto", sans-serif;
+    font-size: 20px;
+  
+    color: #830909;
+   
+}
 
 .btn-block {
     width: 100%;
@@ -198,6 +226,9 @@ table > tbody > tr > td {
     z-index: 1000;
     overflow-y: auto;
 }
+.side{
+    margin-top: 39pxF;
+}
 
 #defaultLayout aside .nav-link {
     display: flex;
@@ -208,6 +239,7 @@ table > tbody > tr > td {
     text-decoration: none;
     transition: all 0.2s;
     width: 100%;
+    
     margin-bottom: 0.5rem;
 }
 
@@ -382,40 +414,39 @@ table > tbody > tr > td {
 .dashboard .stats-section,
 .dashboard .tasks-section {
     margin-bottom: 30px;
+    
+}
+.stat{
+    display: flex;
+    justify-content: space-evenly;
+}
+.card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.dashboard .card {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.card:hover {
+    transform: translateY(-10px);
+}
+
+.card-content {
     display: flex;
     align-items: center;
 }
 
-.dashboard .card-icon {
-    font-size: 2em;
+.card-title {
+    font-size: 24px;
     margin-right: 20px;
-    color: #007bff;
+    color: #333333;
 }
 
-.dashboard .card-content {
-    display: flex;
-    flex-direction: column;
-}
-
-.dashboard .card-title {
-    font-size: 1.2em;
-    margin-bottom: 5px;
-    color: #333;
-}
-
-.dashboard .card-value {
-    font-size: 1.5em;
+.card-value {
+    font-size: 36px;
     font-weight: bold;
-    color: #555;
+    color: #007bff;
 }
 
 .dashboard ul {
@@ -452,3 +483,7 @@ table > tbody > tr > td {
 .nav-link.active {
     background-color: #333; /* ou la couleur de votre choix */
 }
+
+
+
+

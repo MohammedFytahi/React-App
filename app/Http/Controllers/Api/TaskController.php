@@ -90,7 +90,7 @@ class   TaskController extends Controller
 public function getStatTasks()
 {
     try {
-        // Récupérer les utilisateurs AS400 et leurs tâches associées
+
         $as400UsersWithTasks = DB::table('users')
             ->join('task_user', 'users.id', '=', 'task_user.as400_user_id')
             ->join('tasks', 'task_user.task_id', '=', 'tasks.id')
@@ -98,7 +98,7 @@ public function getStatTasks()
             ->get()
             ->groupBy('user_id');
 
-        // Récupérer les utilisateurs WEB et leurs tâches associées
+    
         $webUsersWithTasks = DB::table('users')
             ->join('task_user', 'users.id', '=', 'task_user.web_user_id')
             ->join('tasks', 'task_user.task_id', '=', 'tasks.id')
@@ -106,7 +106,7 @@ public function getStatTasks()
             ->get()
             ->groupBy('user_id');
 
-        // Formater les données pour les utilisateurs AS400
+   
         $formattedAs400Data = [];
         foreach ($as400UsersWithTasks as $userId => $tasks) {
             $userName = $tasks->first()->user_name;
@@ -121,7 +121,7 @@ public function getStatTasks()
             ];
         }
 
-        // Formater les données pour les utilisateurs WEB
+      
         $formattedWebData = [];
         foreach ($webUsersWithTasks as $userId => $tasks) {
             $userName = $tasks->first()->user_name;

@@ -30,6 +30,7 @@ export default function DefaultLayout() {
         <>
             <div id="defaultLayout">
                 <aside>
+                        
                     <Link to="/dashboard" className="nav-link">
                         <FontAwesomeIcon icon={faTachometerAlt} /> Dashboard
                     </Link>

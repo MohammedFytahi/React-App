@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
 
 class ProjectController extends Controller
 {
@@ -88,10 +89,15 @@ class ProjectController extends Controller
     {
         $totalProjects = Project::count();
         $totalTasks = Task::count();
+        $totalUsers= User::where('user_type', 'AS400')->count();
+        $totalWeb = User::where('user_type', 'WEB')->where('role', 'collaborator')->count();
+
     
         return response()->json([
             'totalProjects' => $totalProjects,
             'totalTasks' => $totalTasks,
+            'totalUsers'=>$totalUsers,
+            'totalWeb'=>$totalWeb,
         ]);
     }
 }
