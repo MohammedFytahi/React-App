@@ -40,6 +40,7 @@
          Route::get('/user-tasks', [TaskController::class, 'getStatTasks']);
         
         Route::get('/users/{userId}/tasks', [TaskController::class, 'getUserTasks']);
+        Route::put('/tasks/{taskId}/progress', [TaskController::class, 'updateTaskProgress']);
 
         Route::get('/users/as400', [UserController::class, 'as400Users']);
 Route::get('/users/web', [UserController::class, 'webUsers']);

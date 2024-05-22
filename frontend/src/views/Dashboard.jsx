@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axiosClient from "../axios-client.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faProjectDiagram, faTasks, faUser } from "@fortawesome/free-solid-svg-icons";
-import { Chart as ChartJs } from "chart.js/auto";
+import { CircularProgress, Typography, Grid, Card, CardContent } from "@mui/material";
+
 
 export default function Dashboard() {
     const [projectStats, setProjectStats] = useState({});
@@ -34,61 +35,58 @@ export default function Dashboard() {
     };
 
     if (loading) {
-        return <p className="loading">Loading...</p>;
+        return (
+            <div className="loading-container">
+                <CircularProgress color="primary" size={80} />
+            </div>
+        );
     }
 
     if (error) {
-        return <p className="error">{error}</p>;
+        return (
+            <div className="error-container">
+                <Typography variant="h6" color="error">
+                    {error}
+                </Typography>
+            </div>
+        );
     }
 
     return (
         <div className="dashboard">
-            <h1>Dashboard</h1>
-            <div className="stats-section">
-
-                <h2>Project Statistics</h2>
-                <div className="stat">
-                     <div className="card">
-                    <FontAwesomeIcon icon={faProjectDiagram} className="card-icon" />
-                    <div className="card-content">
-                        <span className="card-title">Total Projects</span>
-                        <span className="card-value">{projectStats.totalProjects}</span>
-                    </div>
-                </div>
-                <div className="card">
-                    <FontAwesomeIcon icon={faTasks} className="card-icon0" />
-                    <div className="card-content">
-                        <span className="card-title">Total Tasks</span>
-                        <span className="card-value">{projectStats.totalTasks}</span>
-                    </div>
-                </div>
-                <div className="card">
-                    <FontAwesomeIcon icon={faUser} className="card-icon1" />
-                    <div className="card-content">
-                        <span className="card-title">Total AS400 Users</span>
-                        <span className="card-value">{projectStats.totalUsers}</span>
-                    </div>
-                </div>
-                 <div className="card">
-                    <FontAwesomeIcon icon={faUser} className="card-icon2" />
-                    <div className="card-content">
-                        <span className="card-title">Total Web Users</span>
-                        <span className="card-value">{projectStats.totalWeb}</span>
-                    </div>
-                </div>
-               
-                </div>
-            </div>
+            <Typography variant="h3" gutterBottom className="dashboard-title">
+                Dashboard
+            </Typography>
+            <Grid container spacing={3}>
+                {renderStatCard("Total Projects", projectStats.totalProjects, faProjectDiagram, "#2196f3")}
+                {renderStatCard("Total Tasks", projectStats.totalTasks, faTasks, "#4caf50")}
+                {renderStatCard("Total AS400 Users", projectStats.totalUsers, faUser, "#f44336")}
+                {renderStatCard("Total Web Users", projectStats.totalWeb, faUser, "#ff9800")}
+            </Grid>
             <UserTasksSection title="AS400 User Tasks" usersWithTasks={as400UsersWithTasks} />
             <UserTasksSection title="WEB User Tasks" usersWithTasks={webUsersWithTasks} />
         </div>
     );
 }
 
+function renderStatCard(title, value, icon, color) {
+    return (
+        <Grid item xs={12} sm={6} md={3} key={title}>
+            <Card className="stat-card" style={{ backgroundColor: color }}>
+                <CardContent>
+                    <FontAwesomeIcon icon={icon} className="stat-icon" />
+                    <Typography variant="h6" className="stat-title">{title}</Typography>
+                    <Typography variant="subtitle1" className="stat-value">{value}</Typography>
+                </CardContent>
+            </Card>
+        </Grid>
+    );
+}
+
 function UserTasksSection({ title, usersWithTasks }) {
     return (
         <div className="tasks-section">
-            <h2>{title}</h2>
+            <Typography variant="h4" gutterBottom className="section-title">{title}</Typography>
             <table>
                 <thead>
                     <tr>

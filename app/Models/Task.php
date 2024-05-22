@@ -22,6 +22,13 @@ class Task extends Model
                     ->withPivot('web_user_id');
     }
     
+
+    public function progress()
+    {
+        return $this->getAttribute('progress');
+    }
+    
+
     
     
 

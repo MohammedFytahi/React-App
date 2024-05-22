@@ -4,6 +4,10 @@ import { useEffect } from "react";
 import axiosClient from "../axios-client";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faTachometerAlt, faFolder, faTasks, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { AppBar, Box, Button, Container, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
+import { Menu as MenuIcon } from "@mui/icons-material";
+
+const drawerWidth = 240;
 
 export default function DefaultLayout() {
     const { user, token, setUser, setToken, notification } = useStateContext();
@@ -26,63 +30,81 @@ export default function DefaultLayout() {
         });
     }, []);
 
+    const menuItems = [
+        { text: 'Dashboard', icon: faTachometerAlt, path: '/dashboard' },
+        { text: 'Projects', icon: faFolder, path: '/projects', role: 'manager' },
+        { text: 'Users', icon: faUser, path: '/users' },
+        { text: 'Tasks', icon: faTasks, path: '/tasks', role: 'manager' },
+        { text: 'My tasks', icon: faTasks, path: '/usertask', role: 'collaborator' }
+    ];
+
     return (
-        <>
-            <div id="defaultLayout">
-                <aside>
-                        
-                    <Link to="/dashboard" className="nav-link">
-                        <FontAwesomeIcon icon={faTachometerAlt} /> Dashboard
-                    </Link>
-                    {user.role === 'manager' && (
-                        <Link to="/projects" className="nav-link">
-                            <FontAwesomeIcon icon={faFolder} /> Projects
-                        </Link>
-                    )}
-                    <Link to="/users" className="nav-link">
-                        <FontAwesomeIcon icon={faUser} /> Users
-                    </Link>
-                    {user.role === 'manager' && (
-                        <Link to="/tasks" className="nav-link">
-                            <FontAwesomeIcon icon={faTasks} /> Tasks
-                        </Link>
-                    )}
-                    {user.role === 'collaborator' && (
-                        <Link to="/usertask" className="nav-link">
-                            <FontAwesomeIcon icon={faTasks} /> My tasks
-                        </Link>
-                    )}
-                </aside>
-                <div className="content">
-                    <header>
-                        <div className="header-logo">
-                            <img
-                                src="images/axa.png"
-                                alt="Logo"
-                                className="logo-img"
-                            />
-                        </div>
-                        <div className="header-user">{user.name}</div>
-                        <div>
-                            <a
-                                href="#"
-                                onClick={onLogout}
-                                className="btn-logout"
-                            >
-                                <FontAwesomeIcon icon={faSignOutAlt} /> Logout
-                            </a>
-                        </div>
-                    </header>
-                    <main>
-                        <Outlet />
-                    </main>
-                    {notification && (
-                        <div className="notification">
-                            {notification}
-                        </div>
-                    )}
-                </div>
-            </div>
-        </>
+        <Box sx={{ display: 'flex' }}>
+            <CssBaseline />
+            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                <Toolbar>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        edge="start"
+                        sx={{ marginRight: 2 }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h6" noWrap component="div">
+                        AXA Management System
+                    </Typography>
+                    <Box sx={{ flexGrow: 1 }} />
+                    <Typography variant="h6" component="div" sx={{ mr: 2 }}>
+                        {user.name}
+                    </Typography>
+                    <Button color="inherit" onClick={onLogout}>
+                        <FontAwesomeIcon icon={faSignOutAlt} /> Logout
+                    </Button>
+                </Toolbar>
+            </AppBar>
+            <Drawer
+                variant="permanent"
+                sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    [`& .MuiDrawer-paper`]: {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                        backgroundImage: `url('images/sidebar-2.310509c9')`, 
+                        backgroundRepeat: 'no-repeat',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    },
+                }}
+            >
+                <Toolbar />
+                <Divider />
+                <List>
+                    {menuItems.map((item, index) => (
+                        (!item.role || user.role === item.role) && (
+                            <ListItem button key={index} component={Link} to={item.path}>
+                                <ListItemIcon>
+                                    <FontAwesomeIcon icon={item.icon} />
+                                </ListItemIcon>
+                                <ListItemText primary={item.text} />
+                            </ListItem>
+                        )
+                    ))}
+                </List>
+            </Drawer>
+            <Box
+                component="main"
+                sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+            >
+                <Toolbar />
+                <Outlet />
+                {notification && (
+                    <Box mt={2} p={2} bgcolor="info.main" color="info.contrastText" borderRadius={1}>
+                        {notification}
+                    </Box>
+                )}
+            </Box>
+        </Box>
     );
 }

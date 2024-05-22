@@ -66,26 +66,36 @@ class   TaskController extends Controller
         return response()->json(['data' => $tasks]);
     }
 
-   public function getUserTasks($userId)
+
+
+    public function getUserTasks($userId)
     {
         try {
-      
             $taskIds = DB::table('task_user')
                 ->where('as400_user_id', $userId)
                 ->orWhere('web_user_id', $userId)
                 ->pluck('task_id');
 
-            $tasks = DB::table('tasks')
-                ->whereIn('id', $taskIds)
-                ->get();
+            $tasks = Task::whereIn('id', $taskIds)->get();
 
-            return response()->json(['data' => $tasks], 200);
+            return TaskResource::collection($tasks);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch user tasks', 'message' => $e->getMessage()], 500);
         }
-    
-    
-}
+    }
+
+    public function updateTaskProgress(Request $request, $taskId)
+    {
+        $task = Task::findOrFail($taskId);
+
+        $progress = $task->progress ?? [];
+        $progress[$request->weekIndex] = $request->value;
+
+        $task->progress = $progress;
+        $task->save();
+
+        return response()->json(['message' => 'Progress updated successfully', 'progress' => $progress]);
+    }
 
 public function getStatTasks()
 {
