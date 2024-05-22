@@ -108,14 +108,14 @@ export default function UserTasks() {
                         <TableCell colSpan={4}>Week {weekIndex + 1}</TableCell>
                         <TableCell>
                           <Slider
-                            value={progress[task.id][weekIndex] || 0}
+                            value={progress[task.id] ? progress[task.id][weekIndex] : 0}
                             onChange={(e, value) => handleProgressChange(task.id, weekIndex, value)}
                             aria-labelledby="continuous-slider"
                             valueLabelDisplay="auto"
                             min={0}
                             max={100}
                           />
-                          {progress[task.id][weekIndex]}%
+                          {progress[task.id] ? progress[task.id][weekIndex] : 0}%
                         </TableCell>
                       </TableRow>
                     ))}

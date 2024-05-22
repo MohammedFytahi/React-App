@@ -9,7 +9,7 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'start_date', 'end_date', 'project_id','user_id'];
+    protected $fillable = ['name', 'description', 'start_date', 'end_date', 'project_id','user_id','progress'];
 
     public function project()
     {
@@ -23,11 +23,9 @@ class Task extends Model
     }
     
 
-    public function progress()
-    {
-        return $this->getAttribute('progress');
-    }
-    
+    protected $casts = [
+        'progress' => 'array',
+    ];
 
     
     

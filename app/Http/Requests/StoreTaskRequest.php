@@ -30,6 +30,7 @@ class StoreTaskRequest extends FormRequest
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'project_id' => 'required|exists:projects,id',
             'user_id' => 'required|exists:users,id',
+            'progress' => 'nullable|json' 
         ];
     }
 }
