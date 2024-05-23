@@ -1,16 +1,17 @@
 import { Link, Navigate, Outlet } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import axiosClient from "../axios-client";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faTachometerAlt, faFolder, faTasks, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import { AppBar, Box, Button, Container, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
+import { faUser, faTachometerAlt, faFolder, faTasks, faSignOutAlt, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { AppBar, Box, Button, Container, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, useTheme } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
 export default function DefaultLayout() {
     const { user, token, setUser, setToken, notification } = useStateContext();
+    const [darkMode, setDarkMode] = useState(false); 
 
     if (!token) {
         return <Navigate to="/login" />;
@@ -29,6 +30,13 @@ export default function DefaultLayout() {
             setUser(data);
         });
     }, []);
+
+    const toggleDarkMode = () => {
+        setDarkMode(!darkMode);
+    };
+
+    const theme = useTheme();
+    const icon = darkMode ? faSun : faMoon; // Icône en fonction du mode
 
     const menuItems = [
         { text: 'Dashboard', icon: faTachometerAlt, path: '/dashboard' },
@@ -55,6 +63,9 @@ export default function DefaultLayout() {
                         AXA Management System
                     </Typography>
                     <Box sx={{ flexGrow: 1 }} />
+                    <IconButton color="inherit" onClick={toggleDarkMode}>
+                        <FontAwesomeIcon icon={icon} />
+                    </IconButton>
                     <Typography variant="h6" component="div" sx={{ mr: 2 }}>
                         {user.name}
                     </Typography>
@@ -98,7 +109,7 @@ export default function DefaultLayout() {
                 sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
             >
                 <Toolbar />
-                <Outlet />
+                <Outlet toggleDarkMode={toggleDarkMode} /> {/* Passer la fonction de basculement du mode sombre */}
                 {notification && (
                     <Box mt={2} p={2} bgcolor="info.main" color="info.contrastText" borderRadius={1}>
                         {notification}

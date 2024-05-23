@@ -1,3 +1,4 @@
+// Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import axiosClient from "../axios-client.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -5,12 +6,13 @@ import { faProjectDiagram, faTasks, faUser } from "@fortawesome/free-solid-svg-i
 import { CircularProgress, Typography, Grid, Card, CardContent } from "@mui/material";
 
 
-export default function Dashboard() {
+export default function Dashboard({ onToggleDarkMode }) { // Changez le nom de la propriété
     const [projectStats, setProjectStats] = useState({});
     const [as400UsersWithTasks, setAs400UsersWithTasks] = useState([]);
     const [webUsersWithTasks, setWebUsersWithTasks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [darkMode, setDarkMode] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -52,8 +54,13 @@ export default function Dashboard() {
         );
     }
 
+    const toggleDarkMode = () => {
+        setDarkMode(!darkMode);
+        onToggleDarkMode(); // Appel de la fonction de basculement du mode sombre dans DefaultLayout
+    };
+
     return (
-        <div className="dashboard">
+        <div className={`dashboard ${darkMode ? "dark-mode" : ""}`}>
             <Typography variant="h3" gutterBottom className="dashboard-title">
                 Dashboard
             </Typography>
@@ -63,8 +70,8 @@ export default function Dashboard() {
                 {renderStatCard("Total AS400 Users", projectStats.totalUsers, faUser, "#f44336")}
                 {renderStatCard("Total Web Users", projectStats.totalWeb, faUser, "#ff9800")}
             </Grid>
-            <UserTasksSection title="AS400 User Tasks" usersWithTasks={as400UsersWithTasks} />
-            <UserTasksSection title="WEB User Tasks" usersWithTasks={webUsersWithTasks} />
+            <UserTasksSection title="AS400 User Tasks" usersWithTasks={as400UsersWithTasks} darkMode={darkMode} />
+            <UserTasksSection title="WEB User Tasks" usersWithTasks={webUsersWithTasks} darkMode={darkMode} />
         </div>
     );
 }
@@ -83,9 +90,9 @@ function renderStatCard(title, value, icon, color) {
     );
 }
 
-function UserTasksSection({ title, usersWithTasks }) {
+function UserTasksSection({ title, usersWithTasks, darkMode }) {
     return (
-        <div className="tasks-section">
+        <div className={`tasks-section ${darkMode ? "dark-mode" : ""}`}>
             <Typography variant="h4" gutterBottom className="section-title">{title}</Typography>
             <table>
                 <thead>
@@ -112,3 +119,4 @@ function UserTasksSection({ title, usersWithTasks }) {
         </div>
     );
 }
+    

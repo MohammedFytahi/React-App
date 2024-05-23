@@ -247,7 +247,7 @@ table > tbody > tr > td {
     background-color: rgba(0, 0, 0, 0.2);
 }
 #defaultLayout aside .nav-link.active {
-    background-color: #333; /* ou la couleur de votre choix */
+    background-color: #333; 
     font-weight: bold;
     color: white;
 }
@@ -481,8 +481,49 @@ table > tbody > tr > td {
     color: #777;
 }
 .nav-link.active {
-    background-color: #333; /* ou la couleur de votre choix */
+    background-color: #333; 
 }
+
+
+.dark-mode {
+    background-color: #222;
+    color: #fff;
+}
+
+.dark-mode .stat-card,
+.dark-mode .tasks-section {
+    background-color: #333;
+    color: #fff;
+}
+
+
+.dark-mode .stat-title,
+.dark-mode .section-title {
+    color: #fff;
+}
+
+
+.dark-mode .stat-icon {
+    color: #bbb;
+}
+
+
+.dark-mode a {
+    color: #6c7a89;
+}
+
+
+.dark-mode button {
+    background-color: #444;
+    color: #fff;
+}
+
+
+.dark-mode .border-dark {
+    border-color: #666;
+}
+
+
 
 
 

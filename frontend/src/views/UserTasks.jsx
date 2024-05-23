@@ -1,6 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axiosClient from "../axios-client.js";
-import { Box, CircularProgress, Slider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Paper } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Slider,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Paper,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Tooltip
+} from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export default function UserTasks() {
   const [tasks, setTasks] = useState([]);
@@ -84,11 +101,11 @@ export default function UserTasks() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Description</TableCell>
+                <TableCell>Task</TableCell>
+                {/* <TableCell>Description</TableCell>
                 <TableCell>Start Date</TableCell>
-                <TableCell>End Date</TableCell>
-                <TableCell>Weeks</TableCell>
+                <TableCell>End Date</TableCell> 
+                <TableCell>Weeks</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -97,28 +114,35 @@ export default function UserTasks() {
                 return (
                   <React.Fragment key={task.id}>
                     <TableRow>
-                      <TableCell>{task.name}</TableCell>
-                      <TableCell>{task.description}</TableCell>
-                      <TableCell>{task.start_date}</TableCell>
-                      <TableCell>{task.end_date}</TableCell>
-                      <TableCell>{weeks} weeks</TableCell>
+                      <TableCell colSpan={5}>
+                        <Accordion>
+                          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography>{task.name}</Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <Typography>{task.description}</Typography>
+                            <Typography>Start Date: {task.start_date}</Typography>
+                            <Typography>End Date: {task.end_date}</Typography>
+                            <Typography>Duration: {weeks} weeks</Typography>
+                            {Array.from({ length: weeks }).map((_, weekIndex) => (
+                              <Box key={`${task.id}-week-${weekIndex}`} sx={{ mt: 2 }}>
+                                <Typography>Week {weekIndex + 1}</Typography>
+                                <Tooltip title={`${progress[task.id] ? progress[task.id][weekIndex] : 0}%`}>
+                                  <Slider
+                                    value={progress[task.id] ? progress[task.id][weekIndex] : 0}
+                                    onChange={(e, value) => handleProgressChange(task.id, weekIndex, value)}
+                                    aria-labelledby="continuous-slider"
+                                    valueLabelDisplay="auto"
+                                    min={0}
+                                    max={100}
+                                  />
+                                </Tooltip>
+                              </Box>
+                            ))}
+                          </AccordionDetails>
+                        </Accordion>
+                      </TableCell>
                     </TableRow>
-                    {Array.from({ length: weeks }).map((_, weekIndex) => (
-                      <TableRow key={`${task.id}-week-${weekIndex}`}>
-                        <TableCell colSpan={4}>Week {weekIndex + 1}</TableCell>
-                        <TableCell>
-                          <Slider
-                            value={progress[task.id] ? progress[task.id][weekIndex] : 0}
-                            onChange={(e, value) => handleProgressChange(task.id, weekIndex, value)}
-                            aria-labelledby="continuous-slider"
-                            valueLabelDisplay="auto"
-                            min={0}
-                            max={100}
-                          />
-                          {progress[task.id] ? progress[task.id][weekIndex] : 0}%
-                        </TableCell>
-                      </TableRow>
-                    ))}
                   </React.Fragment>
                 );
               })}

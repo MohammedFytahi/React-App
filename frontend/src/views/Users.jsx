@@ -170,6 +170,7 @@ export default function Users({ userType }) {
                         </Tooltip>
                         <Tooltip title="Delete">
                           <IconButton
+                          color="secondary"
                             size="small"
                             onClick={() => onDeleteClick(u)}
                           >
