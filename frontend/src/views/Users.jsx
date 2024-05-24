@@ -21,6 +21,11 @@ import {
   TextField,
   Typography,
   Tooltip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { Add as AddIcon, Search as SearchIcon } from "@mui/icons-material";
 
@@ -29,24 +34,37 @@ export default function Users({ userType }) {
   const [loading, setLoading] = useState(false);
   const { user, setNotification } = useStateContext();
   const [searchTerm, setSearchTerm] = useState("");
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
     getUsers(userType);
   }, [userType]);
 
   const onDeleteClick = (user) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) {
-      return;
-    }
+    setUserToDelete(user);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!userToDelete) return;
     axiosClient
-      .delete(`/users/${user.id}`)
+      .delete(`/users/${userToDelete.id}`)
       .then(() => {
         setNotification("User was successfully deleted");
         getUsers(userType);
+        setOpenDeleteDialog(false);
+        setUserToDelete(null);
       })
       .catch((error) => {
         console.error("Error deleting user:", error);
+        setOpenDeleteDialog(false);
       });
+  };
+
+  const handleDeleteCancel = () => {
+    setOpenDeleteDialog(false);
+    setUserToDelete(null);
   };
 
   const getUsers = (userType) => {
@@ -170,7 +188,7 @@ export default function Users({ userType }) {
                         </Tooltip>
                         <Tooltip title="Delete">
                           <IconButton
-                          color="secondary"
+                            color="secondary"
                             size="small"
                             onClick={() => onDeleteClick(u)}
                           >
@@ -186,6 +204,27 @@ export default function Users({ userType }) {
           </Table>
         </TableContainer>
       </Paper>
+      <Dialog
+        open={openDeleteDialog}
+        onClose={handleDeleteCancel}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this user? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="secondary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

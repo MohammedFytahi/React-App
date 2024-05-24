@@ -7,7 +7,6 @@ import {
   faEdit,
   faTrash,
   faUserPlus,
-  faCaretDown,
   faUserCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -29,6 +28,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogContentText,
   DialogActions,
   IconButton,
   Tooltip,
@@ -46,6 +46,8 @@ export default function Tasks() {
   const [as400Users, setAs400Users] = useState([]);
   const [webUsers, setWebUsers] = useState([]);
   const [taskAssigned, setTaskAssigned] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
 
   useEffect(() => {
     getTasks();
@@ -53,18 +55,29 @@ export default function Tasks() {
   }, [projectId]);
 
   const onDeleteClick = (task) => {
-    if (!window.confirm("Are you sure you want to delete this task?")) {
-      return;
-    }
+    setTaskToDelete(task);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!taskToDelete) return;
     axiosClient
-      .delete(`/tasks/${task.id}`)
+      .delete(`/tasks/${taskToDelete.id}`)
       .then(() => {
         setNotification("Task was successfully deleted");
         getTasks();
+        setOpenDeleteDialog(false);
+        setTaskToDelete(null);
       })
       .catch((error) => {
         console.error("Error deleting task:", error);
+        setOpenDeleteDialog(false);
       });
+  };
+
+  const handleDeleteCancel = () => {
+    setOpenDeleteDialog(false);
+    setTaskToDelete(null);
   };
 
   const getTasks = () => {
@@ -158,12 +171,23 @@ export default function Tasks() {
 
   return (
     <Box sx={{ padding: 4 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Typography variant="h4" gutterBottom>
           Tasks
         </Typography>
         {user.role === "manager" && (
-          <Button component={Link} to="/tasks/new" variant="contained" color="primary">
+          <Button
+            component={Link}
+            to="/tasks/new"
+            variant="contained"
+            color="primary"
+          >
             Add new
           </Button>
         )}
@@ -210,30 +234,39 @@ export default function Tasks() {
                   <TableCell>{task.end_date}</TableCell>
                   {user.role === "manager" && (
                     <TableCell>
-                      <IconButton
-                      color="COMPLEMENTARY"
-                       component={Link} to={`/tasks/${task.id}`} size="small">
-                        <FontAwesomeIcon icon={faEdit} />
-                      </IconButton>
-                      
-                      <IconButton
-                       color="secondary"
-                       onClick={() => onDeleteClick(task)} size="small">
-                        <FontAwesomeIcon icon={faTrash} />
-                      </IconButton>
-                      <IconButton
-                       color="primary"
-                        onClick={() =>
-                          taskAssigned
-                            ? handleAssignedTaskClick(task)
-                            : assignTaskToUser(task)
-                        }
-                        size="small"
-                      >
-                        <FontAwesomeIcon
-                          icon={taskAssigned ? faUserCheck : faUserPlus}
-                        />
-                      </IconButton>
+                      <Tooltip title="Edit">
+                        <IconButton
+                          component={Link}
+                          to={`/tasks/${task.id}`}
+                          size="small"
+                        >
+                          <FontAwesomeIcon icon={faEdit} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          color="secondary"
+                          onClick={() => onDeleteClick(task)}
+                          size="small"
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Assign Users">
+                        <IconButton
+                          color="primary"
+                          onClick={() =>
+                            taskAssigned
+                              ? handleAssignedTaskClick(task)
+                              : assignTaskToUser(task)
+                          }
+                          size="small"
+                        >
+                          <FontAwesomeIcon
+                            icon={taskAssigned ? faUserCheck : faUserPlus}
+                          />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   )}
                 </TableRow>
@@ -249,7 +282,10 @@ export default function Tasks() {
         </Table>
       </TableContainer>
 
-      <Dialog open={!!assigningTask} onClose={() => setAssigningTask(null)}>
+      <Dialog
+        open={!!assigningTask}
+        onClose={() => setAssigningTask(null)}
+      >
         <DialogTitle>Assign Task to User</DialogTitle>
         <DialogContent>
           <FormControl fullWidth sx={{ mb: 2 }}>
@@ -285,6 +321,26 @@ export default function Tasks() {
           </Button>
           <Button onClick={handleAssignUser} color="primary">
             Assign
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openDeleteDialog}
+        onClose={handleDeleteCancel}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this task?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="primary">
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
