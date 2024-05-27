@@ -287,7 +287,7 @@ export default function Tasks() {
         onClose={() => setAssigningTask(null)}
       >
         <DialogTitle>Assign Task to User</DialogTitle>
-        <DialogContent>
+        <DialogContent fullWidth>
           <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel>Select AS400 User</InputLabel>
             <Select

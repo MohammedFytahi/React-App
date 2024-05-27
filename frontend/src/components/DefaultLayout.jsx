@@ -4,14 +4,19 @@ import { useState, useEffect } from "react";
 import axiosClient from "../axios-client";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faTachometerAlt, faFolder, faTasks, faSignOutAlt, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
-import { AppBar, Box, Button, Container, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, useTheme } from "@mui/material";
+import { AppBar, Box, Button, Container, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, useTheme, Snackbar, Alert, Slide } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
+function TransitionUp(props) {
+    return <Slide {...props} direction="up" />;
+}
+
 export default function DefaultLayout() {
-    const { user, token, setUser, setToken, notification } = useStateContext();
-    const [darkMode, setDarkMode] = useState(false); 
+    const { user, token, setUser, setToken, notification, setNotification } = useStateContext();
+    const [darkMode, setDarkMode] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(!!notification);
 
     if (!token) {
         return <Navigate to="/login" />;
@@ -31,12 +36,24 @@ export default function DefaultLayout() {
         });
     }, []);
 
+    useEffect(() => {
+        setSnackbarOpen(!!notification);
+    }, [notification]);
+
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
     };
 
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSnackbarOpen(false);
+        setNotification(null);
+    };
+
     const theme = useTheme();
-    const icon = darkMode ? faSun : faMoon; // Icône en fonction du mode
+    const icon = darkMode ? faSun : faMoon;
 
     const menuItems = [
         { text: 'Dashboard', icon: faTachometerAlt, path: '/dashboard' },
@@ -109,12 +126,17 @@ export default function DefaultLayout() {
                 sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
             >
                 <Toolbar />
-                <Outlet toggleDarkMode={toggleDarkMode} /> {/* Passer la fonction de basculement du mode sombre */}
-                {notification && (
-                    <Box mt={2} p={2} bgcolor="info.main" color="info.contrastText" borderRadius={1}>
+                <Outlet toggleDarkMode={toggleDarkMode} /> 
+                <Snackbar
+                    open={snackbarOpen}
+                    autoHideDuration={6000}
+                    onClose={handleSnackbarClose}
+                    TransitionComponent={TransitionUp}
+                >
+                    <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
                         {notification}
-                    </Box>
-                )}
+                    </Alert>
+                </Snackbar>
             </Box>
         </Box>
     );

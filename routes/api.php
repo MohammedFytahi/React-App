@@ -45,6 +45,8 @@
         Route::get('/users/as400', [UserController::class, 'as400Users']);
 Route::get('/users/web', [UserController::class, 'webUsers']);
 Route::get('/users/{userType}', [UserController::class, 'getUsersByType']);
+Route::put('/tasks/{id}/status', [TaskController::class, 'updateStatus']);
+
 
     });
 
