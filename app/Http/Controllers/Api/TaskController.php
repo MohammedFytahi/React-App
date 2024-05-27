@@ -159,7 +159,20 @@ class TaskController extends Controller
 
             return response()->json(['as400Users' => $formattedAs400Data, 'webUsers' => $formattedWebData], 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to fetch user tasks', 'message' => $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to fetch user tasks', 'message'  => $e->getMessage()], 500);
         }
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,in_progress,completed',
+        ]);
+
+        $task = Task::findOrFail($id);
+        $task->status = $request->status;
+        $task->save();
+
+        return response()->json(['message' => 'Status updated successfully']);
     }
 }

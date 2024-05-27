@@ -27,18 +27,7 @@ class TaskUserController extends Controller
         return response()->json(['message' => 'Task assigned successfully']);
     }
 
-    public function updateStatus(Request $request, $id)
-    {
-        $request->validate([
-            'status' => 'required|in:pending,in_progress,completed',
-        ]);
-
-        $task = Task::findOrFail($id);
-        $task->status = $request->status;
-        $task->save();
-
-        return response()->json(['message' => 'Status updated successfully']);
-    }
+  
     
     
 }

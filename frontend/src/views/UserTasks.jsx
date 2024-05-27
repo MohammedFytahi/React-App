@@ -126,13 +126,14 @@ export default function UserTasks() {
   };
 
   const handleStatusChange = (taskId, newStatus) => {
-    setStatus((prevStatus) => ({
-      ...prevStatus,
-      [taskId]: newStatus,
-    }));
-
     axiosClient
       .put(`/tasks/${taskId}/status`, { status: newStatus })
+      .then(() => {
+        setStatus((prevStatus) => ({
+          ...prevStatus,
+          [taskId]: newStatus,
+        }));
+      })
       .catch((error) => {
         console.error("Error updating status:", error);
       });
@@ -175,12 +176,12 @@ export default function UserTasks() {
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                               <Typography variant="h6">{task.name}</Typography>
                               <StatusChip
-                                label={task.status}
-                                status={task.status}
+                                label={status[task.id]}
+                                status={status[task.id]}
                                 icon={
-                                  task.status === 'completed' ? (
+                                  status[task.id] === 'completed' ? (
                                     <AssignmentTurnedInIcon />
-                                  ) : task.status === 'in_progress' ? (
+                                  ) : status[task.id] === 'in_progress' ? (
                                     <AccessTimeIcon />
                                   ) : (
                                     <PendingActionsIcon />
