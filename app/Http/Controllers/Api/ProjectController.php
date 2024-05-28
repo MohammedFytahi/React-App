@@ -59,9 +59,13 @@ class ProjectController extends Controller
         $data = $request->validated();
         $project->update($data);
 
+        // Update project status based on tasks
+        $this->updateProjectStatus($project);
+
         return new ProjectResource($project);
     }
-/**
+
+    /**
      * Display the tasks associated with the specified project.
      *
      * @param  \App\Models\Project  $project
@@ -71,7 +75,6 @@ class ProjectController extends Controller
     {
         return $project->tasks;
     }
-    
 
     /**
      * Remove the specified resource from storage.
@@ -85,21 +88,36 @@ class ProjectController extends Controller
 
         return response("", 204);
     }
+
     public function getProjectStats()
     {
         $totalProjects = Project::count();
         $totalTasks = Task::count();
-        $totalUsers= User::where('user_type', 'AS400')->count();
+        $totalUsers = User::where('user_type', 'AS400')->count();
         $totalWeb = User::where('user_type', 'WEB')->where('role', 'collaborator')->count();
 
-    
         return response()->json([
             'totalProjects' => $totalProjects,
             'totalTasks' => $totalTasks,
-            'totalUsers'=>$totalUsers,
-            'totalWeb'=>$totalWeb,
+            'totalUsers' => $totalUsers,
+            'totalWeb' => $totalWeb,
         ]);
     }
-}
 
-    
+    private function updateProjectStatus(Project $project)
+    {
+        $allTasksCompleted = $project->tasks->every(function ($task) {
+            return $task->status === 'completed';
+        });
+
+        if ($allTasksCompleted) {
+            $project->update(['status' => 'completed']);
+        } else {
+            $hasInProgress = $project->tasks->contains(function ($task) {
+                return $task->status === 'in_progress';
+            });
+
+            $project->update(['status' => $hasInProgress ? 'in_progress' : 'pending']);
+        }
+    }
+}

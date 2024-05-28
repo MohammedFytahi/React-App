@@ -79,15 +79,17 @@ class TaskController extends Controller
                 ->where('as400_user_id', $userId)
                 ->orWhere('web_user_id', $userId)
                 ->pluck('task_id');
-
+    
             $tasks = Task::whereIn('id', $taskIds)->get();
 
+            $tasks->load('users');
+    
             return TaskResource::collection($tasks);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch user tasks', 'message' => $e->getMessage()], 500);
         }
     }
-
+    
     /**
      * Update task progress.
      */

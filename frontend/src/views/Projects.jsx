@@ -98,13 +98,14 @@ export default function Projects() {
                 <TableCell>Techno</TableCell>
                 <TableCell>Start Date</TableCell>
                 <TableCell>End Date</TableCell>
+                <TableCell>Status</TableCell> {/* Add Status Column */}
                 {user.role === "manager" && <TableCell>Actions</TableCell>}
               </TableRow>
             </TableHead>
             {loading ? (
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={7} align="center">
+                  <TableCell colSpan={8} align="center">
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
@@ -119,11 +120,12 @@ export default function Projects() {
                     <TableCell>{project.techno}</TableCell>
                     <TableCell>{project.start_date}</TableCell>
                     <TableCell>{project.end_date}</TableCell>
+                    <TableCell>{project.status}</TableCell> {/* Display Project Status */}
                     {user.role === "manager" && (
                       <TableCell>
                         <Tooltip title="Edit">
                           <IconButton
-                            color="deafault"
+                            color="default"
                             component={Link}
                             to={`/projects/${project.id}`}
                           >
