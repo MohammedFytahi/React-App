@@ -26,20 +26,24 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Pagination,
+  Stack
 } from "@mui/material";
 import { Add as AddIcon, Search as SearchIcon } from "@mui/icons-material";
 
 export default function Users({ userType }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
   const { user, setNotification } = useStateContext();
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
-    getUsers(userType);
-  }, [userType]);
+    getUsers(userType, page);
+  }, [userType, page]);
 
   const onDeleteClick = (user) => {
     setUserToDelete(user);
@@ -52,7 +56,7 @@ export default function Users({ userType }) {
       .delete(`/users/${userToDelete.id}`)
       .then(() => {
         setNotification("User was successfully deleted");
-        getUsers(userType);
+        getUsers(userType, page);
         setOpenDeleteDialog(false);
         setUserToDelete(null);
       })
@@ -67,17 +71,18 @@ export default function Users({ userType }) {
     setUserToDelete(null);
   };
 
-  const getUsers = (userType) => {
+  const getUsers = (userType, page) => {
     setLoading(true);
-    let url = "/users";
+    let url = `/users?page=${page}`;
     if (userType) {
-      url += `/${userType}`;
+      url += `&user_type=${userType}`;
     }
     axiosClient
       .get(url)
       .then(({ data }) => {
         setLoading(false);
         setUsers(data.data);
+        setTotalPages(data.meta.last_page);
       })
       .catch((error) => {
         setLoading(false);
@@ -93,46 +98,32 @@ export default function Users({ userType }) {
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
   return (
-    <Box sx={{ padding: 4 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 2,
-        }}
-      >
+    <Box sx={{ p: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
         <Typography variant="h4">Users</Typography>
         {user.role === "manager" && (
-          <Button
-            component={Link}
-            to="/users/new"
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-          >
+          <Button component={Link} to="/users/new" variant="contained" color="primary" startIcon={<AddIcon />}>
             Add new
           </Button>
         )}
       </Box>
       <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
         <Grid item>
-          <Button onClick={() => getUsers()} variant="outlined">
-            All
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button onClick={() => getUsers("AS400")} variant="outlined">
+          <Button onClick={() => getUsers('AS400', 1)} variant="contained">
             AS400
           </Button>
         </Grid>
         <Grid item>
-          <Button onClick={() => getUsers("WEB")} variant="outlined">
+          <Button onClick={() => getUsers('WEB', 1)} variant="contained">
             WEB
           </Button>
         </Grid>
-        <Grid item xs>
+        <Grid item xs={12} sm={6} md={4}>
           <TextField
             variant="outlined"
             placeholder="Search by name"
@@ -140,11 +131,7 @@ export default function Users({ userType }) {
             onChange={handleSearchChange}
             fullWidth
             InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
+              startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
             }}
           />
         </Grid>
@@ -178,20 +165,12 @@ export default function Users({ userType }) {
                     {user.role === "manager" && (
                       <TableCell>
                         <Tooltip title="Edit">
-                          <IconButton
-                            component={Link}
-                            to={"/users/" + u.id}
-                            size="small"
-                          >
+                          <IconButton component={Link} to={"/users/" + u.id} size="small">
                             <FontAwesomeIcon icon={faEdit} />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete">
-                          <IconButton
-                            color="secondary"
-                            size="small"
-                            onClick={() => onDeleteClick(u)}
-                          >
+                          <IconButton color="secondary" size="small" onClick={() => onDeleteClick(u)}>
                             <FontAwesomeIcon icon={faTrash} />
                           </IconButton>
                         </Tooltip>
@@ -204,25 +183,19 @@ export default function Users({ userType }) {
           </Table>
         </TableContainer>
       </Paper>
-      <Dialog
-        open={openDeleteDialog}
-        onClose={handleDeleteCancel}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+      <Box mt={2} display="flex" justifyContent="center">
+        <Pagination count={totalPages} page={page} onChange={handlePageChange} color="primary" />
+      </Box>
+      <Dialog open={openDeleteDialog} onClose={handleDeleteCancel}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText>
             Are you sure you want to delete this user? This action cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDeleteCancel} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDeleteConfirm} color="secondary" autoFocus>
-            Delete
-          </Button>
+          <Button onClick={handleDeleteCancel} color="primary">Cancel</Button>
+          <Button onClick={handleDeleteConfirm} color="secondary" autoFocus>Delete</Button>
         </DialogActions>
       </Dialog>
     </Box>

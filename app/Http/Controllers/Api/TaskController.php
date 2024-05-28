@@ -24,7 +24,6 @@ class TaskController extends Controller
     {
         $task = Task::create($request->validated());
 
-        // Mettre à jour le statut du projet
         $this->updateProjectStatus($task->project);
 
         return new TaskResource($task);
@@ -41,7 +40,6 @@ class TaskController extends Controller
         $task = Task::findOrFail($id);
         $task->update($request->validated());
 
-        // Mettre à jour le statut du projet
         $this->updateProjectStatus($task->project);
 
         return new TaskResource($task);
@@ -53,7 +51,7 @@ class TaskController extends Controller
         $project = $task->project;
         $task->delete();
 
-        // Mettre à jour le statut du projet
+        
         $this->updateProjectStatus($project);
 
         return response()->json(['message' => 'Task deleted successfully']);
@@ -159,7 +157,6 @@ class TaskController extends Controller
         $task->status = $request->status;
         $task->save();
 
-        // Mettre à jour le statut du projet
         $this->updateProjectStatus($task->project);
 
         return response()->json(['message' => 'Status updated successfully']);

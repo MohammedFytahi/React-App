@@ -18,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return UserResource::collection(User::query()->orderBy('id', 'desc')->paginate(6));
+        return UserResource::collection(User::query()->orderBy('id', 'asc')->paginate(6));
     }
 
     /**
@@ -77,11 +77,7 @@ class UserController extends Controller
 
         return response("", 204);
     }
-    /**
-     * Récupère tous les utilisateurs de type AS400.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
     /**
      * Récupère tous les utilisateurs de type AS400.
      *

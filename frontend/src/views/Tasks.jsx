@@ -332,7 +332,7 @@ export default function Tasks() {
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this task?
+            Are you sure you want to delete this task? This action cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
