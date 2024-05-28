@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
 use Illuminate\Http\Request;
 use App\Models\Task;
+use App\Models\Project;
 use App\Http\Resources\TaskResource;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\User;
@@ -13,65 +14,57 @@ use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $tasks = Task::all();
         return TaskResource::collection($tasks);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreTaskRequest $request)
     {
         $task = Task::create($request->validated());
+
+        // Mettre à jour le statut du projet
+        $this->updateProjectStatus($task->project);
+
         return new TaskResource($task);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $task = Task::findOrFail($id);
         return new TaskResource($task);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateTaskRequest $request, string $id)
     {
         $task = Task::findOrFail($id);
         $task->update($request->validated());
+
+        // Mettre à jour le statut du projet
+        $this->updateProjectStatus($task->project);
+
         return new TaskResource($task);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $task = Task::findOrFail($id);
+        $project = $task->project;
         $task->delete();
+
+        // Mettre à jour le statut du projet
+        $this->updateProjectStatus($project);
+
         return response()->json(['message' => 'Task deleted successfully']);
     }
 
-    /**
-     * Get tasks by project.
-     */
     public function tasksByProject($projectId)
     {
         $tasks = Task::where('project_id', $projectId)->get();
         return response()->json(['data' => $tasks]);
     }
 
-    /**
-     * Get tasks by user.
-     */
     public function getUserTasks($userId)
     {
         try {
@@ -81,7 +74,6 @@ class TaskController extends Controller
                 ->pluck('task_id');
     
             $tasks = Task::whereIn('id', $taskIds)->get();
-
             $tasks->load('users');
     
             return TaskResource::collection($tasks);
@@ -89,15 +81,11 @@ class TaskController extends Controller
             return response()->json(['error' => 'Failed to fetch user tasks', 'message' => $e->getMessage()], 500);
         }
     }
-    
-    /**
-     * Update task progress.
-     */
+
     public function updateTaskProgress(Request $request, $taskId)
     {
         try {
             $task = Task::findOrFail($taskId);
-    
             $progress = $task->progress ? json_decode($task->progress, true) : [];
             $progress[$request->weekIndex] = $request->value;
     
@@ -109,11 +97,7 @@ class TaskController extends Controller
             return response()->json(['error' => 'Failed to update progress', 'message' => $e->getMessage()], 500);
         }
     }
-    
 
-    /**
-     * Get task statistics.
-     */
     public function getStatTasks()
     {
         try {
@@ -175,6 +159,26 @@ class TaskController extends Controller
         $task->status = $request->status;
         $task->save();
 
+        // Mettre à jour le statut du projet
+        $this->updateProjectStatus($task->project);
+
         return response()->json(['message' => 'Status updated successfully']);
+    }
+
+    private function updateProjectStatus(Project $project)
+    {
+        $allTasksCompleted = $project->tasks->every(function ($task) {
+            return $task->status === 'completed';
+        });
+
+        if ($allTasksCompleted) {
+            $project->update(['status' => 'completed']);
+        } else {
+            $hasInProgress = $project->tasks->contains(function ($task) {
+                return $task->status === 'in_progress';
+            });
+
+            $project->update(['status' => $hasInProgress ? 'in_progress' : 'pending']);
+        }
     }
 }

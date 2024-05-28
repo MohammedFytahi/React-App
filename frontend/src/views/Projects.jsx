@@ -21,8 +21,17 @@ import {
   TableRow,
   Tooltip,
   Typography,
+  Chip,
 } from "@mui/material";
-import { Edit as EditIcon, Delete as DeleteIcon, Assignment as AssignmentIcon } from "@mui/icons-material";
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Assignment as AssignmentIcon,
+  PendingActions as PendingActionsIcon,
+  CheckCircle as CheckCircleIcon,
+  HourglassEmpty as HourglassEmptyIcon,
+} from "@mui/icons-material";
+import { format } from "date-fns";
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
@@ -77,6 +86,23 @@ export default function Projects() {
     return text;
   };
 
+  const getStatusChip = (status) => {
+    switch (status) {
+      case 'pending':
+        return <Chip icon={<PendingActionsIcon />} label="Pending" color="default" />;
+      case 'in_progress':
+        return <Chip icon={<HourglassEmptyIcon />} label="In Progress" color="primary" />;
+      case 'completed':
+        return <Chip icon={<CheckCircleIcon />} label="Completed" color="success" />;
+      default:
+        return <Chip label="Unknown" />;
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return format(new Date(dateString), 'PPPP');
+  };
+
   return (
     <Box p={3}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
@@ -98,7 +124,7 @@ export default function Projects() {
                 <TableCell>Techno</TableCell>
                 <TableCell>Start Date</TableCell>
                 <TableCell>End Date</TableCell>
-                <TableCell>Status</TableCell> {/* Add Status Column */}
+                <TableCell>Status</TableCell>
                 {user.role === "manager" && <TableCell>Actions</TableCell>}
               </TableRow>
             </TableHead>
@@ -118,9 +144,9 @@ export default function Projects() {
                     <TableCell>{project.name}</TableCell>
                     <TableCell>{limitWords(project.description, 10)}</TableCell>
                     <TableCell>{project.techno}</TableCell>
-                    <TableCell>{project.start_date}</TableCell>
-                    <TableCell>{project.end_date}</TableCell>
-                    <TableCell>{project.status}</TableCell> {/* Display Project Status */}
+                    <TableCell>{formatDate(project.start_date)}</TableCell>
+                    <TableCell>{formatDate(project.end_date)}</TableCell>
+                    <TableCell>{getStatusChip(project.status)}</TableCell>
                     {user.role === "manager" && (
                       <TableCell>
                         <Tooltip title="Edit">
