@@ -162,7 +162,7 @@ export default function UserTasks() {
             <TableHead>
               <TableRow>
                 <TableCell>Task</TableCell>
-              </TableRow>
+              </TableRow> 
             </TableHead>
             <TableBody>
               {tasks.map((task) => {
