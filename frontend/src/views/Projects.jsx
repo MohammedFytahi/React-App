@@ -124,14 +124,15 @@ export default function Projects() {
                 <TableCell>Techno</TableCell>
                 <TableCell>Start Date</TableCell>
                 <TableCell>End Date</TableCell>
-                <TableCell>Status</TableCell>
+                <TableCell>Web Status</TableCell>
+                <TableCell>AS400 Status</TableCell>
                 {user.role === "manager" && <TableCell>Actions</TableCell>}
               </TableRow>
             </TableHead>
             {loading ? (
               <TableBody>
                 <TableRow>
-                  <TableCell colSpan={8} align="center">
+                  <TableCell colSpan={9} align="center">
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
@@ -147,6 +148,7 @@ export default function Projects() {
                     <TableCell>{formatDate(project.start_date)}</TableCell>
                     <TableCell>{formatDate(project.end_date)}</TableCell>
                     <TableCell>{getStatusChip(project.status)}</TableCell>
+                    <TableCell>{getStatusChip(project.as400_status)}</TableCell>
                     {user.role === "manager" && (
                       <TableCell>
                         <Tooltip title="Edit">

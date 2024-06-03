@@ -22,6 +22,7 @@ class ProjectResource extends JsonResource
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'status'=>$this->status,
+            'as400_status'=>$this->as400_status,
             'user_id' => $this->user_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

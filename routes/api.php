@@ -5,7 +5,8 @@
     use App\Http\Controllers\Api\UserController;
     use App\Http\Controllers\Api\TaskController;
     use App\Http\Controllers\Api\TaskUserController;
-    use Illuminate\Http\Request;
+    use App\Http\Controllers\Api\QuestionController;
+use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Route;
 
     /*
@@ -35,6 +36,8 @@
         // Route::get('/users/web', [UserController::class, 'webUsers']);
         // Route::get('/users/{userType}', [UserController::class, 'getUsersByType']);
         
+        Route::put('/tasks/{id}/status', [TaskController::class, 'updateStatus']);
+        Route::put('/tasks/{id}/as400_status', [TaskController::class, 'updateAS400Status']);
 
          Route::get('/project-stats', [ProjectController::class, 'getProjectStats']);
          Route::get('/user-tasks', [TaskController::class, 'getStatTasks']);
@@ -45,8 +48,9 @@
         Route::get('/users/as400', [UserController::class, 'as400Users']);
 Route::get('/users/web', [UserController::class, 'webUsers']);
 Route::get('/users/{userType}', [UserController::class, 'getUsersByType']);
-Route::put('/tasks/{id}/status', [TaskController::class, 'updateStatus']);
 
+  Route::get('/projects/{projectId}/questions', [QuestionController::class, 'index']);
+    Route::post('/questions', [QuestionController::class, 'store']);
 
     });
 

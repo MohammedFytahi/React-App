@@ -9,7 +9,7 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'techno', 'start_date', 'end_date', 'status', 'user_id'];
+    protected $fillable = ['name', 'description', 'techno', 'start_date', 'end_date', 'status','as400_status', 'user_id'];
 
     public function tasks()
     {

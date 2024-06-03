@@ -9,10 +9,10 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'start_date', 'end_date', 'project_id','user_id','progress', 'status'];
+    protected $fillable = ['name', 'description', 'start_date', 'end_date', 'project_id', 'user_id', 'progress', 'status', 'as400_status'];
 
     public function project()
-    {
+    {   
         return $this->belongsTo(Project::class);
     }
 
@@ -21,13 +21,8 @@ class Task extends Model
         return $this->belongsToMany(User::class, 'task_user', 'task_id', 'as400_user_id')
                     ->withPivot('web_user_id');
     }
-    
 
     protected $casts = [
         'progress' => 'array',
     ];
-
-    
-    
-
 }

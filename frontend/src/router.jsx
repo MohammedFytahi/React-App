@@ -15,47 +15,50 @@ import ProjectForm from "./views/ProjectForm";
 import Tasks from "./views/Tasks.jsx";
 import TaskForm from "./views/TaskForm.jsx";
 import UserTasks from "./views/UserTasks.jsx";
+import CommunityPage from "./views/CommunityPage.jsx";
+import CommunityForm from "./views/CommunityForm.jsx";
+
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <DefaultLayout/>,
+    element: <DefaultLayout />,
     children: [
       {
         path: '/',
-        element: <Navigate to="/users"/>
+        element: <Navigate to="/users" />
       },
       {
         path: '/dashboard',
-        element: <Dashboard/>
+        element: <Dashboard />
       },
       {
         path: '/users',
-        element: <Users/>
+        element: <Users />
       },
       {
         path: '/projects',
-        element: <Projects/>
+        element: <Projects />
       },
       {
         path: '/tasks',
-        element: <Tasks/>
+        element: <Tasks />
       },
       {
         path: '/tasks/new',
-        element:<TaskForm key="taskCreate"/>
+        element: <TaskForm key="taskCreate" />
       },
       {
         path: '/tasks/:id',
-        element:<TaskForm key="taskUpdate"/>
+        element: <TaskForm key="taskUpdate" />
       },
       {
         path: '/projects/:id/tasks',
-        element: <Tasks/>
+        element: <Tasks />
       },
       {
         path: '/usertask',
-        element: <UserTasks/>
+        element: <UserTasks />
       },
       {
         path: '/users/new',
@@ -71,21 +74,29 @@ const router = createBrowserRouter([
       },
       {
         path: '/users/:id',
-        element: <UserForm key="userUpdate" />
-      }
+        element: <UserForm key="userUpdate" />  
+      },
+      {
+        path: '/projects/:id/community',
+        element: <CommunityPage />
+      },
+      {
+        path: '/projects//community-form', 
+        element: <CommunityForm />
+      },
     ]
   },
   {
     path: '/',
-    element: <GuestLayout/>,
+    element: <GuestLayout />,
     children: [
       {
         path: '/login',
-        element: <Login/>
+        element: <Login />
       },
       {
         path: '/signup',
-        element: <Signup/>
+        element: <Signup />
       },
       {
         path: '/users/as400',
@@ -99,7 +110,7 @@ const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <NotFound/>
+    element: <NotFound />
   }
 ]);
 
