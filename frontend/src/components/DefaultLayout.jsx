@@ -61,7 +61,7 @@ export default function DefaultLayout() {
         { text: 'Users', icon: faUser, path: '/users' },
         { text: 'Tasks', icon: faTasks, path: '/tasks', role: 'manager' },
         { text: 'My tasks', icon: faTasks, path: '/usertask', role: 'collaborator' },
-        { text: 'Coumunity', icon: faTasks, path: '/projects//community-form', role: 'collaborator' }
+        { text: 'Coumunity', icon: faTasks, path: '/questions' }
     ];
 
     return (

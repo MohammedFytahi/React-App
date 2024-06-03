@@ -1,4 +1,4 @@
-// route.jsx
+// src/router.jsx
 
 import React from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
@@ -17,7 +17,7 @@ import TaskForm from "./views/TaskForm.jsx";
 import UserTasks from "./views/UserTasks.jsx";
 import CommunityPage from "./views/CommunityPage.jsx";
 import CommunityForm from "./views/CommunityForm.jsx";
-
+import Questions from "./views/Questions.jsx";
 
 const router = createBrowserRouter([
   {
@@ -74,15 +74,19 @@ const router = createBrowserRouter([
       },
       {
         path: '/users/:id',
-        element: <UserForm key="userUpdate" />  
+        element: <UserForm key="userUpdate" />
       },
       {
         path: '/projects/:id/community',
         element: <CommunityPage />
       },
       {
-        path: '/projects//community-form', 
+        path: '/projects//community-form',
         element: <CommunityForm />
+      },
+      {
+        path: '/questions', 
+        element: <Questions />
       },
     ]
   },

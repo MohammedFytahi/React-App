@@ -49,8 +49,12 @@ use Illuminate\Http\Request;
 Route::get('/users/web', [UserController::class, 'webUsers']);
 Route::get('/users/{userType}', [UserController::class, 'getUsersByType']);
 
-  Route::get('/projects/{projectId}/questions', [QuestionController::class, 'index']);
-    Route::post('/questions', [QuestionController::class, 'store']);
+Route::get('/community/questions', [QuestionController::class, 'index']); 
+Route::get('/questions/project/{projectId}', [QuestionController::class, 'indexByProject']); 
+Route::post('/questions', [QuestionController::class, 'store']); 
+Route::put('/community/questions/{question}', [QuestionController::class, 'update']);
+
+Route::delete('/community/questions/{question}', [QuestionController::class, 'destroy']);
 
     });
 
