@@ -2,29 +2,55 @@ import React, { useState, useEffect } from 'react';
 import axiosClient from '../axios-client';
 import { Box, Typography, List, Card, CardContent, CardHeader, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Avatar } from '@mui/material';
 import { styled } from '@mui/system';
+import { Link } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
-const Root = styled(Box)({
+const Root = styled(Box)(({ theme }) => ({
   padding: '32px',
-});
+  backgroundColor: '#f4f6f8',
+  minHeight: '100vh',
+}));
 
-const QuestionCard = styled(Card)({
+const Header = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: theme.spacing(4),
+}));
+
+const QuestionCard = styled(Card)(({ theme }) => ({
   marginBottom: '16px',
   backgroundColor: '#fff',
-  transition: 'background-color 0.3s ease',
+  transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
   '&:hover': {
     backgroundColor: '#f1f1f1',
+    boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
   },
-});
+  borderRadius: '12px',
+  padding: '16px',
+}));
 
-const QuestionText = styled(Typography)({
+const QuestionText = styled(Typography)(({ theme }) => ({
   fontWeight: '500',
-});
+  fontSize: '1.1rem',
+  color: '#333',
+}));
 
-const UserAvatar = styled(Avatar)({
-  marginRight: '16px',
-});
+const UserAvatar = styled(Avatar)(({ theme }) => ({
+  marginRight: theme.spacing(2),
+  border: '2px solid #3f51b5',
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+  backgroundColor: '#3f51b5',
+  color: '#fff',
+  '&:hover': {
+    backgroundColor: '#303f9f',
+  },
+}));
 
 export default function Questions() {
   const [questions, setQuestions] = useState([]);
@@ -32,6 +58,9 @@ export default function Questions() {
   const [editQuestionId, setEditQuestionId] = useState(null);
   const [editQuestionText, setEditQuestionText] = useState('');
   const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openAddResponseDialog, setOpenAddResponseDialog] = useState(false);
+  const [responseText, setResponseText] = useState('');
+  const [currentQuestionId, setCurrentQuestionId] = useState(null);
 
   useEffect(() => {
     fetchCurrentUser();
@@ -70,7 +99,6 @@ export default function Questions() {
     axiosClient
       .put(`/community/questions/${editQuestionId}`, { question: editQuestionText })
       .then(({ data }) => {
-        // Update the question in the local state
         setQuestions((prevQuestions) =>
           prevQuestions.map((question) =>
             question.id === editQuestionId ? { ...question, question: editQuestionText } : question
@@ -87,7 +115,6 @@ export default function Questions() {
     axiosClient
       .delete(`/community/questions/${questionId}`)
       .then(() => {
-        // Remove the question from the local state
         setQuestions((prevQuestions) => prevQuestions.filter((question) => question.id !== questionId));
       })
       .catch((error) => {
@@ -95,11 +122,34 @@ export default function Questions() {
       });
   };
 
+  const handleAddResponse = (questionId) => {
+    setCurrentQuestionId(questionId);
+    setOpenAddResponseDialog(true);
+  };
+
+  const handleSaveResponse = () => {
+    axiosClient
+      .post(`/community/questions/${currentQuestionId}/responses`, { response: responseText })
+      .then(({ data }) => {
+        setOpenAddResponseDialog(false);
+      })
+      .catch((error) => {
+        console.error('Error adding response:', error);
+      });
+  };
+
   return (
     <Root>
-      <Typography variant="h4" gutterBottom>
-        All Questions
-      </Typography>
+      <Header>
+        <Typography variant="h4" gutterBottom>
+          All Questions
+        </Typography>
+      
+        <StyledButton variant="contained" component={Link} to="/projects//community-form">
+          Add new
+        </StyledButton>
+      </Header>
+   
       <List>
         {questions.map((question) => (
           <QuestionCard key={question.id} elevation={3}>
@@ -119,6 +169,9 @@ export default function Questions() {
                       </IconButton>
                     </>
                   )}
+                  <IconButton onClick={() => handleAddResponse(question.id)}>
+                    <AddIcon />
+                  </IconButton>
                 </Box>
               }
             />
@@ -129,7 +182,7 @@ export default function Questions() {
         ))}
       </List>
 
-      {/* Dialogue de modification */}
+      {/* Edit Dialog */}
       <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
         <DialogTitle>Edit Question</DialogTitle>
         <DialogContent>
@@ -147,6 +200,27 @@ export default function Questions() {
         <DialogActions>
           <Button onClick={() => setOpenEditDialog(false)}>Cancel</Button>
           <Button onClick={handleSaveEdit}>Save</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Add Response Dialog */}
+      <Dialog open={openAddResponseDialog} onClose={() => setOpenAddResponseDialog(false)}>
+        <DialogTitle>Add Response</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="addResponse"
+            label="Response"
+            type="text"
+            fullWidth
+            value={responseText}
+            onChange={(e) => setResponseText(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenAddResponseDialog(false)}>Cancel</Button>
+          <Button onClick={handleSaveResponse}>Save</Button>
         </DialogActions>
       </Dialog>
     </Root>

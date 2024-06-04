@@ -118,10 +118,10 @@ export default function Projects() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
+                {/* <TableCell>ID</TableCell> */}
                 <TableCell>Name</TableCell>
                 <TableCell>Description</TableCell>
-                <TableCell>Techno</TableCell>
+                {/* <TableCell>Techno</TableCell> */}
                 <TableCell>Start Date</TableCell>
                 <TableCell>End Date</TableCell>
                 <TableCell>Web Status</TableCell>
@@ -141,10 +141,10 @@ export default function Projects() {
               <TableBody>
                 {projects.map((project) => (
                   <TableRow key={project.id}>
-                    <TableCell>{project.id}</TableCell>
+                    {/* <TableCell>{project.id}</TableCell> */}
                     <TableCell>{project.name}</TableCell>
                     <TableCell>{limitWords(project.description, 10)}</TableCell>
-                    <TableCell>{project.techno}</TableCell>
+                    {/* <TableCell>{project.techno}</TableCell> */}
                     <TableCell>{formatDate(project.start_date)}</TableCell>
                     <TableCell>{formatDate(project.end_date)}</TableCell>
                     <TableCell>{getStatusChip(project.status)}</TableCell>
