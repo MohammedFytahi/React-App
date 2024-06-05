@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axiosClient from '../axios-client';
-import { Box, Typography, List, Card, CardContent, CardHeader, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Avatar } from '@mui/material';
+import {
+  Box,
+  Typography,
+  List,
+  Card,
+  CardContent,
+  CardHeader,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Avatar
+} from '@mui/material';
 import { styled } from '@mui/system';
 import { Link } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
@@ -9,8 +24,9 @@ import AddIcon from '@mui/icons-material/Add';
 
 const Root = styled(Box)(({ theme }) => ({
   padding: '32px',
-  backgroundColor: '#f4f6f8',
+  backgroundColor: '#e0f7fa',
   minHeight: '100vh',
+  fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
 }));
 
 const Header = styled(Box)(({ theme }) => ({
@@ -22,10 +38,10 @@ const Header = styled(Box)(({ theme }) => ({
 
 const QuestionCard = styled(Card)(({ theme }) => ({
   marginBottom: '16px',
-  backgroundColor: '#fff',
+  backgroundColor: '#ffffff',
   transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
   '&:hover': {
-    backgroundColor: '#f1f1f1',
+    backgroundColor: '#e0f7fa',
     boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
   },
   borderRadius: '12px',
@@ -40,16 +56,17 @@ const QuestionText = styled(Typography)(({ theme }) => ({
 
 const UserAvatar = styled(Avatar)(({ theme }) => ({
   marginRight: theme.spacing(2),
-  border: '2px solid #3f51b5',
+  border: '2px solid #00796b',
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
   marginBottom: theme.spacing(2),
-  backgroundColor: '#3f51b5',
+  backgroundColor: '#00796b',
   color: '#fff',
   '&:hover': {
-    backgroundColor: '#303f9f',
+    backgroundColor: '#004d40',
   },
+  textTransform: 'none',
 }));
 
 export default function Questions() {
@@ -144,12 +161,10 @@ export default function Questions() {
         <Typography variant="h4" gutterBottom>
           All Questions
         </Typography>
-      
-        <StyledButton variant="contained" component={Link} to="/projects//community-form">
+        <StyledButton variant="contained" component={Link} to="/projects/community-form">
           Add new
         </StyledButton>
       </Header>
-   
       <List>
         {questions.map((question) => (
           <QuestionCard key={question.id} elevation={3}>
@@ -182,7 +197,6 @@ export default function Questions() {
         ))}
       </List>
 
-      {/* Edit Dialog */}
       <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
         <DialogTitle>Edit Question</DialogTitle>
         <DialogContent>
@@ -199,11 +213,11 @@ export default function Questions() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenEditDialog(false)}>Cancel</Button>
-          <Button onClick={handleSaveEdit}>Save</Button>
+          <Button onClick={handleSaveEdit} color="primary">Save</Button>
         </DialogActions>
       </Dialog>
 
-      {/* Add Response Dialog */}
+
       <Dialog open={openAddResponseDialog} onClose={() => setOpenAddResponseDialog(false)}>
         <DialogTitle>Add Response</DialogTitle>
         <DialogContent>
@@ -220,7 +234,7 @@ export default function Questions() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenAddResponseDialog(false)}>Cancel</Button>
-          <Button onClick={handleSaveResponse}>Save</Button>
+          <Button onClick={handleSaveResponse} color="primary">Save</Button>
         </DialogActions>
       </Dialog>
     </Root>

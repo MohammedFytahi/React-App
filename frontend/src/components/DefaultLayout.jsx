@@ -1,10 +1,10 @@
-import { Link, Navigate, Outlet } from "react-router-dom";
+import { NavLink, Navigate, Outlet } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
 import { useState, useEffect } from "react";
 import axiosClient from "../axios-client";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faTachometerAlt, faFolder, faTasks, faSignOutAlt, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
-import { AppBar, Box, Button, Container, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, useTheme, Snackbar, Alert, Slide } from "@mui/material";
+import { AppBar, Box, Button, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, useTheme, Snackbar, Alert, Slide } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 
 const drawerWidth = 240;
@@ -17,6 +17,7 @@ export default function DefaultLayout() {
     const { user, token, setUser, setToken, notification, setNotification } = useStateContext();
     const [darkMode, setDarkMode] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(!!notification);
+    const [darkModeMessage, setDarkModeMessage] = useState("");
 
     if (!token) {
         return <Navigate to="/login" />;
@@ -42,6 +43,8 @@ export default function DefaultLayout() {
 
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
+        setDarkModeMessage(darkMode ? "Light mode activated" : "Dark mode activated");
+        setSnackbarOpen(true);
     };
 
     const handleSnackbarClose = (event, reason) => {
@@ -50,6 +53,7 @@ export default function DefaultLayout() {
         }
         setSnackbarOpen(false);
         setNotification(null);
+        setDarkModeMessage("");
     };
 
     const theme = useTheme();
@@ -61,7 +65,7 @@ export default function DefaultLayout() {
         { text: 'Users', icon: faUser, path: '/users' },
         { text: 'Tasks', icon: faTasks, path: '/tasks', role: 'manager' },
         { text: 'My tasks', icon: faTasks, path: '/usertask', role: 'collaborator' },
-        { text: 'Coumunity', icon: faTasks, path: '/questions' }
+        { text: 'Community', icon: faTasks, path: '/questions' }
     ];
 
     return (
@@ -100,7 +104,7 @@ export default function DefaultLayout() {
                     [`& .MuiDrawer-paper`]: {
                         width: drawerWidth,
                         boxSizing: 'border-box',
-                        backgroundImage: `url('images/sidebar-2.310509c9')`, 
+                        backgroundImage: `url('images/sidebar-2.310509c9')`,
                         backgroundRepeat: 'no-repeat',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
@@ -112,7 +116,24 @@ export default function DefaultLayout() {
                 <List>
                     {menuItems.map((item, index) => (
                         (!item.role || user.role === item.role) && (
-                            <ListItem button key={index} component={Link} to={item.path}>
+                            <ListItem 
+                                button 
+                                key={index} 
+                                component={NavLink} 
+                                to={item.path}
+                                sx={{
+                                    color: 'inherit',
+                                    '&.active': {
+                                        color: 'white',
+                                        backgroundColor: theme.palette.primary.main,
+                                        boxShadow: `inset 5px 0 0 ${theme.palette.primary.dark}`,
+                                        '& .MuiListItemIcon-root': {
+                                            color: 'white',
+                                        },
+                                    },
+                                    transition: 'background-color 0.3s, color 0.3s',
+                                }}
+                            >
                                 <ListItemIcon>
                                     <FontAwesomeIcon icon={item.icon} />
                                 </ListItemIcon>
@@ -135,7 +156,7 @@ export default function DefaultLayout() {
                     TransitionComponent={TransitionUp}
                 >
                     <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-                        {notification}
+                        {notification || darkModeMessage}
                     </Alert>
                 </Snackbar>
             </Box>
