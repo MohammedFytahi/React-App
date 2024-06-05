@@ -53,7 +53,7 @@ Route::get('/community/questions', [QuestionController::class, 'index']);
 Route::get('/questions/project/{projectId}', [QuestionController::class, 'indexByProject']); 
 Route::post('/questions', [QuestionController::class, 'store']); 
 Route::put('/community/questions/{question}', [QuestionController::class, 'update']);
-
+Route::post('/community/questions/{questionId}/responses', [QuestionController::class, 'addResponse']);
 Route::delete('/community/questions/{question}', [QuestionController::class, 'destroy']);
 
     });

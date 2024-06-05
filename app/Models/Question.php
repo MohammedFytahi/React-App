@@ -20,6 +20,10 @@ class Question extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function responses()
+    {
+        return $this->hasMany(Response::class);
+    }
     // Si vous avez une relation avec les réponses des questions, vous pouvez l'ajouter ici
     // public function answers()
     // {

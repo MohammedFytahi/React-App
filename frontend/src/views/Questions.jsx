@@ -99,7 +99,11 @@ export default function Questions() {
     axiosClient
       .get('/community/questions')
       .then(({ data }) => {
-        setQuestions(data);
+        const formattedQuestions = data.map(question => ({
+          ...question,
+          responses: question.responses || []
+        }));
+        setQuestions(formattedQuestions);
       })
       .catch((error) => {
         console.error('Error fetching questions:', error);
@@ -148,7 +152,15 @@ export default function Questions() {
     axiosClient
       .post(`/community/questions/${currentQuestionId}/responses`, { response: responseText })
       .then(({ data }) => {
+        setQuestions((prevQuestions) =>
+          prevQuestions.map((question) =>
+            question.id === currentQuestionId
+              ? { ...question, responses: [...question.responses, data] }
+              : question
+          )
+        );
         setOpenAddResponseDialog(false);
+        setResponseText('');
       })
       .catch((error) => {
         console.error('Error adding response:', error);
@@ -192,6 +204,18 @@ export default function Questions() {
             />
             <CardContent>
               <QuestionText>{question.question}</QuestionText>
+              {question.responses && question.responses.length > 0 && (
+                <Box mt={2}>
+                  <Typography variant="h6">Responses:</Typography>
+                  <List>
+                    {question.responses.map((response) => (
+                      <Box key={response.id} mb={1} p={1} bgcolor="#f1f1f1" borderRadius="4px">
+                        <Typography variant="body2">{response.response}</Typography>
+                      </Box>
+                    ))}
+                  </List>
+                </Box>
+              )}
             </CardContent>
           </QuestionCard>
         ))}
@@ -216,7 +240,6 @@ export default function Questions() {
           <Button onClick={handleSaveEdit} color="primary">Save</Button>
         </DialogActions>
       </Dialog>
-
 
       <Dialog open={openAddResponseDialog} onClose={() => setOpenAddResponseDialog(false)}>
         <DialogTitle>Add Response</DialogTitle>

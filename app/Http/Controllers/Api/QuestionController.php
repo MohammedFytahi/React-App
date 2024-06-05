@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Question;
+use App\Models\Response;
 
 class QuestionController extends Controller
 {
@@ -62,5 +63,21 @@ class QuestionController extends Controller
 
         return response()->json(['message' => 'Question deleted successfully'], 200);
     }
-   
+
+    public function addResponse(Request $request, $questionId)
+    {
+        $request->validate([
+            'response' => 'required|string',
+        ]);
+
+        $response = Response::create([
+            'question_id' => $questionId,
+            'user_id' => auth()->id(),
+            'response' => $request->input('response'),
+        ]);
+
+        return response()->json($response, 201);    
+    }
 }
+   
+
