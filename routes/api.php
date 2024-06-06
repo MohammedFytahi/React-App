@@ -7,7 +7,8 @@
     use App\Http\Controllers\Api\TaskUserController;
     use App\Http\Controllers\Api\QuestionController;
 use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 
     /*
     |--------------------------------------------------------------------------
@@ -56,6 +57,17 @@ Route::put('/community/questions/{question}', [QuestionController::class, 'updat
 Route::post('/community/questions/{questionId}/responses', [QuestionController::class, 'addResponse']);
 Route::delete('/community/questions/{question}', [QuestionController::class, 'destroy']);
 
+    });
+    Route::get('/test-email', function () {
+        try {
+            Mail::raw('This is a test email', function ($message) {
+                $message->to('your_email@example.com')
+                        ->subject('Test Email');
+            });
+            return 'Email sent successfully';
+        } catch (\Exception $e) {
+            return 'Failed to send email: ' . $e->getMessage();
+        }
     });
 
     Route::post('/signup', [AuthController::class, 'signup']);
