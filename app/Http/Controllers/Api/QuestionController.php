@@ -77,7 +77,14 @@ class QuestionController extends Controller
         ]);
 
         return response()->json($response, 201);    
-    }
+    }   
+
+
+    public function getResponses(Question $question)
+{
+    $responses = $question->responses;
+    return response()->json($responses);
+}
 }
    
 

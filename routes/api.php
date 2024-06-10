@@ -57,6 +57,8 @@ Route::put('/community/questions/{question}', [QuestionController::class, 'updat
 Route::post('/community/questions/{questionId}/responses', [QuestionController::class, 'addResponse']);
 Route::delete('/community/questions/{question}', [QuestionController::class, 'destroy']);
 
+Route::get('/community/questions/{question}/responses', [QuestionController::class, 'getResponses']);
+
     });
     Route::get('/test-email', function () {
         try {

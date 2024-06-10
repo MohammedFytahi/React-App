@@ -118,10 +118,13 @@ export default function Tasks() {
     axiosClient
       .get("/users")
       .then(({ data }) => {
+        console.log("Users fetched: ", data.data); // Log for debugging
         const as400Users = data.data.filter(
           (user) => user.user_type === "AS400"
         );
         const webUsers = data.data.filter((user) => user.user_type === "WEB");
+        console.log("AS400 Users: ", as400Users); // Log for debugging
+        console.log("WEB Users: ", webUsers); // Log for debugging
         setAs400Users(as400Users);
         setWebUsers(webUsers);
         setAssigningTask(task);
@@ -274,22 +277,22 @@ export default function Tasks() {
             ) : (
               <TableRow>
                 <TableCell colSpan={6} sx={{ textAlign: "center" }}>
-                  No tasks found.
+                  No Tasks Available
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </TableContainer>
-
       <Dialog
-        open={!!assigningTask}
+        open={Boolean(assigningTask)}
         onClose={() => setAssigningTask(null)}
       >
-        <DialogTitle>Assign Task to User</DialogTitle>
-        <DialogContent fullWidth>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Select AS400 User</InputLabel>
+        <DialogTitle>Assign Task</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Select users to assign to the task:</DialogContentText>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>AS400 User</InputLabel>
             <Select
               value={selectedAs400UserId || ""}
               onChange={(e) => handleAssignAs400User(e.target.value)}
@@ -301,8 +304,8 @@ export default function Tasks() {
               ))}
             </Select>
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Select Web User</InputLabel>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>WEB User</InputLabel>
             <Select
               value={selectedWebUserId || ""}
               onChange={(e) => handleAssignWebUser(e.target.value)}
@@ -324,15 +327,14 @@ export default function Tasks() {
           </Button>
         </DialogActions>
       </Dialog>
-
       <Dialog
         open={openDeleteDialog}
         onClose={handleDeleteCancel}
       >
-        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogTitle>Delete Task</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this task? This action cannot be undone.
+            Are you sure you want to delete this task?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

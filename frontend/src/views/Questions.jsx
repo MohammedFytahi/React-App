@@ -14,60 +14,85 @@ import {
   DialogActions,
   Button,
   TextField,
-  Avatar
+  Avatar,
+  Slide,
 } from '@mui/material';
 import { styled } from '@mui/system';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
 const Root = styled(Box)(({ theme }) => ({
-  padding: '32px',
-  backgroundColor: '#e0f7fa',
+  padding: '40px',
+  backgroundColor: '#f5f5f5',
   minHeight: '100vh',
   fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
 }));
 
 const Header = styled(Box)(({ theme }) => ({
+  width: '100%',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  marginBottom: theme.spacing(4),
+  marginBottom: theme.spacing(6),
+  paddingBottom: theme.spacing(2),
+  borderBottom: '2px solid #e0e0e0',
 }));
 
 const QuestionCard = styled(Card)(({ theme }) => ({
-  marginBottom: '16px',
+  width: '100%',
+  maxWidth: '800px',
+  marginBottom: theme.spacing(4),
   backgroundColor: '#ffffff',
-  transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
   '&:hover': {
-    backgroundColor: '#e0f7fa',
-    boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+    transform: 'translateY(-8px)',
+    boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
   },
-  borderRadius: '12px',
-  padding: '16px',
+  borderRadius: theme.spacing(2),
+  padding: theme.spacing(3),
+  overflow: 'visible',
 }));
 
 const QuestionText = styled(Typography)(({ theme }) => ({
   fontWeight: '500',
-  fontSize: '1.1rem',
+  fontSize: '1.2rem',
   color: '#333',
+  marginBottom: theme.spacing(2),
 }));
 
 const UserAvatar = styled(Avatar)(({ theme }) => ({
   marginRight: theme.spacing(2),
-  border: '2px solid #00796b',
+  border: '2px solid #0288d1',
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
-  backgroundColor: '#00796b',
+  backgroundColor: '#0288d1',
   color: '#fff',
   '&:hover': {
-    backgroundColor: '#004d40',
+    backgroundColor: '#01579b',
   },
   textTransform: 'none',
+  borderRadius: theme.spacing(2),
+  padding: theme.spacing(1, 3),
 }));
+
+const StyledDialog = ({ open, onClose, title, children, onSave }) => (
+  <Dialog open={open} onClose={onClose} TransitionComponent={Slide} keepMounted>
+    <DialogTitle>{title}</DialogTitle>
+    <DialogContent>{children}</DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Cancel</Button>
+      <Button onClick={onSave} color="primary">
+        Save
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
 
 export default function Questions() {
   const [questions, setQuestions] = useState([]);
@@ -99,9 +124,9 @@ export default function Questions() {
     axiosClient
       .get('/community/questions')
       .then(({ data }) => {
-        const formattedQuestions = data.map(question => ({
+        const formattedQuestions = data.map((question) => ({
           ...question,
-          responses: question.responses || []
+          responses: question.responses || [],
         }));
         setQuestions(formattedQuestions);
       })
@@ -154,9 +179,7 @@ export default function Questions() {
       .then(({ data }) => {
         setQuestions((prevQuestions) =>
           prevQuestions.map((question) =>
-            question.id === currentQuestionId
-              ? { ...question, responses: [...question.responses, data] }
-              : question
+            question.id === currentQuestionId ? { ...question, responses: [...question.responses, data] } : question
           )
         );
         setOpenAddResponseDialog(false);
@@ -173,93 +196,91 @@ export default function Questions() {
         <Typography variant="h4" gutterBottom>
           All Questions
         </Typography>
-        <StyledButton variant="contained" component={Link} to="/projects//community-form">
+        <StyledButton variant="contained" component={Link} to="/projects/community-form">
           Add new
         </StyledButton>
       </Header>
       <List>
         {questions.map((question) => (
-          <QuestionCard key={question.id} elevation={3}>
-            <CardHeader
-              avatar={<UserAvatar alt={question.user.name} src={question.user.avatarUrl} />}
-              title={question.user.name}
-              subheader={`Asked by: ${question.user.name}`}
-              action={
-                <Box>
-                  {currentUser && question.user.id === currentUser.id && (
-                    <>
-                      <IconButton onClick={() => handleEdit(question.id, question.question)}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton onClick={() => handleDelete(question.id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </>
-                  )}
-                  <IconButton onClick={() => handleAddResponse(question.id)}>
-                    <AddIcon />
-                  </IconButton>
-                </Box>
-              }
-            />
-            <CardContent>
-              <QuestionText>{question.question}</QuestionText>
-              {question.responses && question.responses.length > 0 && (
-                <Box mt={2}>
-                  <Typography variant="h6">Responses:</Typography>
-                  <List>
-                    {question.responses.map((response) => (
-                      <Box key={response.id} mb={1} p={1} bgcolor="#f1f1f1" borderRadius="4px">
-                        <Typography variant="body2">{response.response}</Typography>
-                      </Box>
-                    ))}
-                  </List>
-                </Box>
-              )}
-            </CardContent>
-          </QuestionCard>
+          <Slide direction="up" in key={question.id}>
+            <QuestionCard elevation={3}>
+              <CardHeader
+                avatar={<UserAvatar alt={question.user.name} src={question.user.avatarUrl} />}
+                title={question.user.name}
+                subheader={`Asked by: ${question.user.name}`}
+                action={
+                  <Box>
+                    {currentUser && question.user.id === currentUser.id && (
+                      <>
+                        <IconButton onClick={() => handleEdit(question.id, question.question)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleDelete(question.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    )}
+                    <IconButton onClick={() => handleAddResponse(question.id)}>
+                      <AddIcon />
+                    </IconButton>
+                  </Box>
+                }
+              />
+              <CardContent>
+                <QuestionText>{question.question}</QuestionText>
+                {question.responses && question.responses.length > 0 && (
+                  <Box mt={2}>
+                    <Typography variant="h6">Responses:</Typography>
+                    <List>
+                      {question.responses.map((response) => (
+                        <Box key={response.id} mb={1} p={2} bgcolor="#f0f0f0" borderRadius="4px">
+                          <Typography variant="body2">{response.response}</Typography>
+                        </Box>
+                      ))}
+                    </List>
+                  </Box>
+                )}
+              </CardContent>
+            </QuestionCard>
+          </Slide>
         ))}
       </List>
 
-      <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-        <DialogTitle>Edit Question</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="editQuestion"
-            label="Edit Question"
-            type="text"
-            fullWidth
-            value={editQuestionText}
-            onChange={(e) => setEditQuestionText(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenEditDialog(false)}>Cancel</Button>
-          <Button onClick={handleSaveEdit} color="primary">Save</Button>
-        </DialogActions>
-      </Dialog>
+      <StyledDialog
+        open={openEditDialog}
+        onClose={() => setOpenEditDialog(false)}
+        title="Edit Question"
+        onSave={handleSaveEdit}
+      >
+        <TextField
+          autoFocus
+          margin="dense"
+          id="editQuestion"
+          label="Edit Question"
+          type="text"
+          fullWidth
+          value={editQuestionText}
+          onChange={(e) => setEditQuestionText(e.target.value)}
+        />
+      </StyledDialog>
 
-      <Dialog open={openAddResponseDialog} onClose={() => setOpenAddResponseDialog(false)}>
-        <DialogTitle>Add Response</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="addResponse"
-            label="Response"
-            type="text"
-            fullWidth
-            value={responseText}
-            onChange={(e) => setResponseText(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenAddResponseDialog(false)}>Cancel</Button>
-          <Button onClick={handleSaveResponse} color="primary">Save</Button>
-        </DialogActions>
-      </Dialog>
+      <StyledDialog
+        open={openAddResponseDialog}
+        onClose={() => setOpenAddResponseDialog(false)}
+        title="Add Response"
+        onSave={handleSaveResponse}
+      >
+        <TextField
+          autoFocus
+          margin="dense"
+          id="addResponse"
+          label="Response"
+          type="text"
+          fullWidth
+          value={responseText}
+          onChange={(e) => setResponseText(e.target.value)}
+        />
+      </StyledDialog>
     </Root>
   );
 }
