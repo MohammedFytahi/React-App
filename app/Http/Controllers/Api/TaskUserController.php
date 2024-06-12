@@ -34,6 +34,8 @@ class TaskUserController extends Controller
             try {
                 Mail::to($as400User->email)->send(new TaskAssigned($task, $as400User));
                 Log::info('Email sent to', ['email' => $as400User->email]);
+                Mail::to( $webUser->email)->send(new TaskAssigned($task,  $webUser));
+                Log::info('Email sent to', ['email' =>  $webUser->email]);
             } catch (\Exception $e) {
                 Log::error('Failed to send email', ['error' => $e->getMessage()]);
                 return response()->json(['message' => 'Task assigned but email failed to send', 'error' => $e->getMessage()], 500);

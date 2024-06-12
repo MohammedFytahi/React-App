@@ -178,4 +178,45 @@ class TaskController extends Controller
             $project->update(['status' => $hasInProgress ? 'in_progress' : 'pending']);
         }
     }
+
+
+    public function updateAS400Status(Request $request, $id){
+     $request->validate([
+        'as400_status' => 'required|in:pending,in_progress,completed',
+     ]);
+     $task = Task::findOrFail($id);
+     $task->as400_status = $request->as400_status;
+     $task->save();
+
+     $this->updateProjectAS400Status($task->project);
+
+     return response()->json(['message' => 'status updated successfully']);
+    }
+
+    public function updateProjectAS400Status(Project $project){
+        $allTasksCompleted = $project->tasks->every(function ($task) {
+            return $task->status === 'completed';
+        });
+
+        if ($allTasksCompleted) {
+            $project->update(['as400_status' => 'completed']);
+        } else {
+            $hasInProgress = $project->tasks->contains(function ($task) {
+                return $task->status === 'in_progress';
+            });
+
+            $project->update(['as400_status' => $hasInProgress ? 'in_progress' : 'pending']);
+        }
+    }
+
+
+    public function getStatuses()
+    {
+        $statuses = DB::table('tasks')
+            ->select('status')
+            ->distinct()
+            ->pluck('status');
+        
+        return response()->json($statuses);
+    }
 }

@@ -19,9 +19,17 @@ export default function DefaultLayout() {
     const [snackbarOpen, setSnackbarOpen] = useState(!!notification);
     const [darkModeMessage, setDarkModeMessage] = useState("");
 
-    if (!token) {
-        return <Navigate to="/login" />;
-    }
+    useEffect(() => {
+        if (token) {
+            axiosClient.get("/user").then(({ data }) => {
+                setUser(data);
+            });
+        }
+    }, [token]);
+
+    useEffect(() => {
+        setSnackbarOpen(!!notification);
+    }, [notification]);
 
     const onLogout = (ev) => {
         ev.preventDefault();
@@ -30,16 +38,6 @@ export default function DefaultLayout() {
             setToken(null);
         });
     };
-
-    useEffect(() => {
-        axiosClient.get("/user").then(({ data }) => {
-            setUser(data);
-        });
-    }, []);
-
-    useEffect(() => {
-        setSnackbarOpen(!!notification);
-    }, [notification]);
 
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
@@ -67,6 +65,10 @@ export default function DefaultLayout() {
         { text: 'My tasks', icon: faTasks, path: '/usertask', role: 'collaborator' },
         { text: 'Community', icon: faTasks, path: '/questions' }
     ];
+
+    if (!token) {
+        return <Navigate to="/login" />;
+    }
 
     return (
         <Box sx={{ display: 'flex' }}>

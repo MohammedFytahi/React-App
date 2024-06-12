@@ -46,6 +46,9 @@ use Illuminate\Support\Facades\Route;
         Route::get('/users/{userId}/tasks', [TaskController::class, 'getUserTasks']);
         Route::put('/tasks/{taskId}/progress', [TaskController::class, 'updateTaskProgress']);
 
+        Route::put('/tasks/{id}/web-status', 'TaskController@updateWebStatus');
+        Route::put('/tasks/{id}/as400-status', 'TaskController@updateAS400Status'); 
+
         Route::get('/users/as400', [UserController::class, 'as400Users']);
 Route::get('/users/web', [UserController::class, 'webUsers']);
 Route::get('/users/{userType}', [UserController::class, 'getUsersByType']);
@@ -56,6 +59,7 @@ Route::post('/questions', [QuestionController::class, 'store']);
 Route::put('/community/questions/{question}', [QuestionController::class, 'update']);
 Route::post('/community/questions/{questionId}/responses', [QuestionController::class, 'addResponse']);
 Route::delete('/community/questions/{question}', [QuestionController::class, 'destroy']);
+Route::get('/tasks/statuses', [TaskController::class, 'getStatuses']);
 
 Route::get('/community/questions/{question}/responses', [QuestionController::class, 'getResponses']);
 

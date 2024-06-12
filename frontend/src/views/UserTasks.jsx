@@ -64,6 +64,8 @@ export default function UserTasks() {
   const [userId, setUserId] = useState(null);
   const [progress, setProgress] = useState({});
   const [status, setStatus] = useState({});
+  const [user, setUser] = useState({ user_type: "" });
+  
 
   useEffect(() => {
     const token = localStorage.getItem('ACCESS_TOKEN');
@@ -71,6 +73,7 @@ export default function UserTasks() {
       axiosClient.get("/user")
         .then(({ data }) => {
           setUserId(data.id);
+          setUser(data);
         })
         .catch((error) => {
           console.error("Error fetching user:", error);
@@ -128,6 +131,20 @@ export default function UserTasks() {
   const handleStatusChange = (taskId, newStatus) => {
     axiosClient
       .put(`/tasks/${taskId}/status`, { status: newStatus })
+      .then(() => {
+        setStatus((prevStatus) => ({
+          ...prevStatus,
+          [taskId]: newStatus,
+        }));
+      })
+      .catch((error) => {
+        console.error("Error updating status:", error);
+      });
+  };
+
+  const handleas400StatusChange = (taskId, newStatus) => {
+    axiosClient
+      .put(`/tasks/${taskId}/as400_status`, { as400_status: newStatus })
       .then(() => {
         setStatus((prevStatus) => ({
           ...prevStatus,
@@ -201,6 +218,21 @@ export default function UserTasks() {
                                     <Typography variant="body1"><strong>Duration:</strong> {weeks} weeks</Typography>
                                   </TaskDetails>
                                   <Divider />
+                                  {user.user_type === "AS400" && (
+                                  <FormControl fullWidth sx={{ mb: 2 }}>
+                                    <InputLabel>Status</InputLabel>
+                                    <Select
+                                      value={status[task.id]}
+                                      onChange={(e) => handleas400StatusChange(task.id, e.target.value)}
+                                    >
+                                      <MenuItem value="pending">Pending</MenuItem>
+                                      <MenuItem value="in_progress">In Progress</MenuItem>
+                                      <MenuItem value="completed">Completed</MenuItem>
+                                    </Select>
+                                  </FormControl>)}
+
+
+                                  {user.user_type === "WEB" && (
                                   <FormControl fullWidth sx={{ mb: 2 }}>
                                     <InputLabel>Status</InputLabel>
                                     <Select
@@ -211,7 +243,7 @@ export default function UserTasks() {
                                       <MenuItem value="in_progress">In Progress</MenuItem>
                                       <MenuItem value="completed">Completed</MenuItem>
                                     </Select>
-                                  </FormControl>
+                                  </FormControl>)}
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                   {Array.from({ length: weeks }).map((_, weekIndex) => (
