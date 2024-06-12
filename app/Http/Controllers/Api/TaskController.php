@@ -195,14 +195,14 @@ class TaskController extends Controller
 
     public function updateProjectAS400Status(Project $project){
         $allTasksCompleted = $project->tasks->every(function ($task) {
-            return $task->status === 'completed';
+            return $task->as400_status === 'completed';
         });
 
         if ($allTasksCompleted) {
             $project->update(['as400_status' => 'completed']);
         } else {
             $hasInProgress = $project->tasks->contains(function ($task) {
-                return $task->status === 'in_progress';
+                return $task->as400_status === 'in_progress';
             });
 
             $project->update(['as400_status' => $hasInProgress ? 'in_progress' : 'pending']);
