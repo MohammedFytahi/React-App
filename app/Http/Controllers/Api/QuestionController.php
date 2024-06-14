@@ -75,6 +75,16 @@ class QuestionController extends Controller
         return response()->json(['message' => 'Question deleted successfully'], 200);
     }
 
+    public function destroyReponse(Response $response){
+        if($response->user_id != auth()->id()){
+            return response()->json(['error'=> 'Unauthorized'], 403);
+        };
+
+        $response->delete();
+
+        return response()->json(['message' => 'Answer deleted successfully']);
+    }
+
     public function addResponse(Request $request, $questionId)
     {
         $request->validate([

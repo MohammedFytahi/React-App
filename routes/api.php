@@ -55,6 +55,7 @@ Route::get('/questions/project/{projectId}', [QuestionController::class, 'indexB
 Route::post('/questions', [QuestionController::class, 'store']); 
 Route::put('/community/questions/{question}', [QuestionController::class, 'update']);
 Route::put('/community/responses/{response}', [QuestionController::class, 'updateReponse']);
+Route::delete('/community/responses/{response}', [QuestionController::class, 'destroyReponse']);
 Route::post('/community/questions/{questionId}/responses', [QuestionController::class, 'addResponse']);
 Route::delete('/community/questions/{question}', [QuestionController::class, 'destroy']);
 Route::get('/tasks/statuses', [TaskController::class, 'getStatuses']);
