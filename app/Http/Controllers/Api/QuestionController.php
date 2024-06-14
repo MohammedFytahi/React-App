@@ -51,6 +51,17 @@ class QuestionController extends Controller
     
         return response()->json($question, 200);
     }
+
+
+    public function updateReponse(Request $request, Response $response){
+        $request->validate([
+            'response' => 'required|string',
+        ]);
+        $response->update([
+            'response'=>$request->response,
+        ]);
+        return response()->json($response, 200);
+    }
     
     public function destroy(Question $question)
     {
