@@ -18,7 +18,7 @@ import {
   Slide,
 } from '@mui/material';
 import { styled } from '@mui/system';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -94,6 +94,21 @@ const StyledDialog = ({ open, onClose, title, children, onSave }) => (
   </Dialog>
 );
 
+const StyledConfirmationDialog = ({ open, onClose, onConfirm }) => (
+  <Dialog open={open} onClose={onClose} TransitionComponent={Slide} keepMounted>
+    <DialogTitle>Confirm Deletion</DialogTitle>
+    <DialogContent>
+      <Typography>Are you sure you want to delete this question?</Typography>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Cancel</Button>
+      <Button onClick={onConfirm} color="secondary">
+        Delete
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
+
 export default function Questions() {
   const [questions, setQuestions] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
@@ -103,6 +118,9 @@ export default function Questions() {
   const [openAddResponseDialog, setOpenAddResponseDialog] = useState(false);
   const [responseText, setResponseText] = useState('');
   const [currentQuestionId, setCurrentQuestionId] = useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [questionToDelete, setQuestionToDelete] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCurrentUser();
@@ -158,10 +176,17 @@ export default function Questions() {
   };
 
   const handleDelete = (questionId) => {
+    setQuestionToDelete(questionId);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
     axiosClient
-      .delete(`/community/questions/${questionId}`)
+      .delete(`/community/questions/${questionToDelete}`)
       .then(() => {
-        setQuestions((prevQuestions) => prevQuestions.filter((question) => question.id !== questionId));
+        setQuestions((prevQuestions) => prevQuestions.filter((question) => question.id !== questionToDelete));
+        setOpenDeleteDialog(false);
+        setQuestionToDelete(null);
       })
       .catch((error) => {
         console.error('Error deleting question:', error);
@@ -190,20 +215,24 @@ export default function Questions() {
       });
   };
 
+  const handleCardClick = (questionId) => {
+    navigate(`/questions/${questionId}`);
+  };
+
   return (
     <Root>
       <Header>
         <Typography variant="h4" gutterBottom>
           All Questions
         </Typography>
-        <StyledButton variant="contained" component={Link} to="/projects/community-form">
+        <StyledButton variant="contained" component={Link} to="/projects//community-form">
           Add new
         </StyledButton>
       </Header>
       <List>
         {questions.map((question) => (
           <Slide direction="up" in key={question.id}>
-            <QuestionCard elevation={3}>
+            <QuestionCard elevation={3} onClick={() => handleCardClick(question.id)}>
               <CardHeader
                 avatar={<UserAvatar alt={question.user.name} src={question.user.avatarUrl} />}
                 title={question.user.name}
@@ -212,15 +241,15 @@ export default function Questions() {
                   <Box>
                     {currentUser && question.user.id === currentUser.id && (
                       <>
-                        <IconButton onClick={() => handleEdit(question.id, question.question)}>
+                        <IconButton onClick={(e) => { e.stopPropagation(); handleEdit(question.id, question.question); }}>
                           <EditIcon />
                         </IconButton>
-                        <IconButton onClick={() => handleDelete(question.id)}>
+                        <IconButton onClick={(e) => { e.stopPropagation(); handleDelete(question.id); }}>
                           <DeleteIcon />
                         </IconButton>
                       </>
                     )}
-                    <IconButton onClick={() => handleAddResponse(question.id)}>
+                    <IconButton onClick={(e) => { e.stopPropagation(); handleAddResponse(question.id); }}>
                       <AddIcon />
                     </IconButton>
                   </Box>
@@ -281,6 +310,12 @@ export default function Questions() {
           onChange={(e) => setResponseText(e.target.value)}
         />
       </StyledDialog>
+
+      <StyledConfirmationDialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleConfirmDelete}
+      />
     </Root>
   );
 }

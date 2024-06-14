@@ -85,6 +85,13 @@ class QuestionController extends Controller
     $responses = $question->responses;
     return response()->json($responses);
 }
+
+public function show($id)
+{
+    $question = Question::with('user', 'responses.user')->findOrFail($id);
+    return response()->json($question);
+}
+
 }
    
 

@@ -18,6 +18,7 @@ import UserTasks from "./views/UserTasks.jsx";
 import CommunityPage from "./views/CommunityPage.jsx";
 import CommunityForm from "./views/CommunityForm.jsx";
 import Questions from "./views/Questions.jsx";
+import QuestionDetail from './views/QuestionDetail';
 
 const router = createBrowserRouter([
   {
@@ -38,7 +39,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/projects',
-        element: <Projects />
+        element: <Projects /> 
       },
       {
         path: '/tasks',
@@ -87,7 +88,12 @@ const router = createBrowserRouter([
       {
         path: '/questions', 
         element: <Questions />
+       
       },
+      {
+        path:'/questions/:id',
+        element:<QuestionDetail />
+      }
     ]
   },
   {

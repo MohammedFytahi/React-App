@@ -29,6 +29,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import { styled } from '@mui/system';
+import { CheckCircle as CheckCircleIcon, HourglassEmpty as HourglassEmptyIcon } from "@mui/icons-material";
 
 const StatusChip = styled(Chip)(({ status }) => ({
   marginLeft: 8,
@@ -162,6 +163,19 @@ export default function UserTasks() {
     const timeDiff = Math.abs(end - start);
     const weeks = Math.ceil(timeDiff / (1000 * 60 * 60 * 24 * 7));
     return { weeks };
+  };
+
+  const getStatusChip = (status) => {
+    switch (status) {
+      case 'pending':
+        return <Chip icon={<PendingActionsIcon />} label="Pending" color="default" />;
+      case 'in_progress':
+        return <Chip icon={<HourglassEmptyIcon />} label="In Progress" color="primary" />;
+      case 'completed':
+        return <Chip icon={<CheckCircleIcon />} label="Completed" color="success" />;
+      default:
+        return <Chip label="Unknown" />;
+    }
   };
 
   return (

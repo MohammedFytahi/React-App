@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import axiosClient from '../axios-client';
-import { Box, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Snackbar,
+} from '@mui/material';
 
 export default function CommunityForm() {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState('');
   const [newQuestion, setNewQuestion] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchProjects();
@@ -27,16 +40,26 @@ export default function CommunityForm() {
 
   const handlePostQuestion = () => {
     if (newQuestion.trim() && selectedProject) {
+      setLoading(true);
       axiosClient
         .post('/questions', { project_id: selectedProject, question: newQuestion })
         .then(() => {
           setNewQuestion('');
-          alert('Question posted successfully');
+          setSuccessMessage('Question posted successfully');
         })
         .catch((error) => {
+          setError('Error posting question. Please try again later.');
           console.error("Error posting question:", error);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setError(null);
+    setSuccessMessage('');
   };
 
   return (
@@ -67,9 +90,21 @@ export default function CommunityForm() {
         variant="outlined"
         sx={{ marginBottom: 2 }}
       />
-      <Button variant="contained" color="primary" onClick={handlePostQuestion}>
-        Post Question
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handlePostQuestion}
+        disabled={loading}
+      >
+        {loading ? 'Posting...' : 'Post Question'}
       </Button>
+      <Snackbar
+        open={!!error || !!successMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={error || successMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      />
     </Box>
   );
 }
