@@ -4,9 +4,12 @@ import axiosClient from "../axios-client.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faProjectDiagram, faTasks, faUser } from "@fortawesome/free-solid-svg-icons";
 import { CircularProgress, Typography, Grid, Card, CardContent } from "@mui/material";
+import { Bar, Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend } from 'chart.js';
 
+ChartJS.register(BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend);
 
-export default function Dashboard({ onToggleDarkMode }) { // Changez le nom de la propriété
+export default function Dashboard({ onToggleDarkMode }) {
     const [projectStats, setProjectStats] = useState({});
     const [as400UsersWithTasks, setAs400UsersWithTasks] = useState([]);
     const [webUsersWithTasks, setWebUsersWithTasks] = useState([]);
@@ -56,7 +59,24 @@ export default function Dashboard({ onToggleDarkMode }) { // Changez le nom de l
 
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
-        onToggleDarkMode(); // Appel de la fonction de basculement du mode sombre dans DefaultLayout
+        onToggleDarkMode();
+    };
+
+    const barData = {
+        labels: ['Projects', 'Tasks', 'AS400 Users', 'Web Users'],
+        datasets: [{
+            label: 'Count',
+            data: [projectStats.totalProjects, projectStats.totalTasks, projectStats.totalUsers, projectStats.totalWeb],
+            backgroundColor: ['#2196f3', '#4caf50', '#f44336', '#ff9800'],
+        }],
+    };
+
+    const doughnutData = {
+        labels: ['AS400 Users', 'Web Users'],
+        datasets: [{
+            data: [projectStats.totalUsers, projectStats.totalWeb],
+            backgroundColor: ['#f44336', '#ff9800'],
+        }],
     };
 
     return (
@@ -69,6 +89,24 @@ export default function Dashboard({ onToggleDarkMode }) { // Changez le nom de l
                 {renderStatCard("Total Tasks", projectStats.totalTasks, faTasks, "#4caf50")}
                 {renderStatCard("Total AS400 Users", projectStats.totalUsers, faUser, "#f44336")}
                 {renderStatCard("Total Web Users", projectStats.totalWeb, faUser, "#ff9800")}
+            </Grid>
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h5">Project and User Statistics</Typography>
+                            <Bar data={barData} />
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h5">User Distribution</Typography>
+                            <Doughnut data={doughnutData} />
+                        </CardContent>
+                    </Card>
+                </Grid>
             </Grid>
             <UserTasksSection title="AS400 User Tasks" usersWithTasks={as400UsersWithTasks} darkMode={darkMode} />
             <UserTasksSection title="WEB User Tasks" usersWithTasks={webUsersWithTasks} darkMode={darkMode} />
@@ -119,4 +157,3 @@ function UserTasksSection({ title, usersWithTasks, darkMode }) {
         </div>
     );
 }
-    

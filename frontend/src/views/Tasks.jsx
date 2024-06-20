@@ -240,7 +240,7 @@ export default function Tasks() {
                       <Tooltip title="Edit">
                         <IconButton
                           component={Link}
-                          to={`/tasks/${task.id}`}
+                          to={"/tasks/" + task.id}
                           size="small"
                         >
                           <FontAwesomeIcon icon={faEdit} />

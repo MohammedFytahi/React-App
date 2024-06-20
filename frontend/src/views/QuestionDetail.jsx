@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
 
 export default function QuestionDetail() {
   const { id } = useParams();
@@ -100,6 +101,19 @@ export default function QuestionDetail() {
       });
   };
 
+  const handleMarkAsSolution = (responseId) => {
+    axiosClient.put(`/community/questions/${id}/mark-solution`, { responseId })
+      .then(({ data }) => {
+        setQuestion((prevQuestion) => ({
+          ...prevQuestion,
+          solutionId: responseId,
+        }));
+      })
+      .catch((error) => {
+        console.error('Error marking response as solution:', error);
+      });
+  };
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
@@ -138,16 +152,23 @@ export default function QuestionDetail() {
                   <Typography variant="caption" color="textSecondary">
                     - {response.user.name}
                   </Typography>
-                  {currentUser && response.user.id === currentUser.id && (
-                    <Box display="flex" justifyContent="flex-end">
-                      <IconButton onClick={() => handleEditResponse(response.id, response.response)}>
-                        <EditIcon />
+                  <Box display="flex" justifyContent="flex-end">
+                    {currentUser && response.user.id === currentUser.id && (
+                      <>
+                        <IconButton onClick={() => handleEditResponse(response.id, response.response)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleDeleteResponse(response.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    )}
+                    {currentUser && question.user.id === currentUser.id && (
+                      <IconButton onClick={() => handleMarkAsSolution(response.id)}>
+                        <CheckIcon color={response.id === question.solutionId ? 'primary' : 'inherit'} />
                       </IconButton>
-                      <IconButton onClick={() => handleDeleteResponse(response.id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  )}
+                    )}
+                  </Box>
                 </Box>
               ))}
             </Box>
