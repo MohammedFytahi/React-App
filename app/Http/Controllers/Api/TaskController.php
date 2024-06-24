@@ -221,5 +221,34 @@ class TaskController extends Controller
     }
 
 
+    public function getCollaboratorStats()
+{
+    try {
+        $collaborators = User::where('role', 'collaborator')->get();
+
+        $collaboratorStats = $collaborators->map(function ($collaborator) {
+            $taskCount = DB::table('task_user')
+                ->where('web_user_id', $collaborator->id)
+                ->count();
+
+            $projectCount = Project::whereHas('tasks', function ($query) use ($collaborator) {
+                $query->where('user_id', $collaborator->id);
+            })->count();
+
+            return [
+                'id' => $collaborator->id,
+                'name' => $collaborator->name,
+                'taskCount' => $taskCount,
+                'projectCount' => $projectCount,
+            ];
+        });
+
+        return response()->json($collaboratorStats);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Failed to fetch collaborator stats', 'message' => $e->getMessage()], 500);
+    }
+}
+
+
     
 }

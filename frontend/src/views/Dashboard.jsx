@@ -1,8 +1,5 @@
-// Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import axiosClient from "../axios-client.js";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faProjectDiagram, faTasks, faUser } from "@fortawesome/free-solid-svg-icons";
 import { CircularProgress, Typography, Grid, Card, CardContent } from "@mui/material";
 import { Bar, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -13,6 +10,7 @@ export default function Dashboard({ onToggleDarkMode }) {
     const [projectStats, setProjectStats] = useState({});
     const [as400UsersWithTasks, setAs400UsersWithTasks] = useState([]);
     const [webUsersWithTasks, setWebUsersWithTasks] = useState([]);
+    const [collaboratorStats, setCollaboratorStats] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [darkMode, setDarkMode] = useState(false);
@@ -24,13 +22,15 @@ export default function Dashboard({ onToggleDarkMode }) {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [projectStatsResponse, userTasksResponse] = await Promise.all([
+            const [projectStatsResponse, userTasksResponse, collaboratorStatsResponse] = await Promise.all([
                 axiosClient.get("/project-stats"),
                 axiosClient.get("/user-tasks"),
+                axiosClient.get("/collaborator-stats"),
             ]);
             setProjectStats(projectStatsResponse.data);
             setAs400UsersWithTasks(userTasksResponse.data.as400Users);
             setWebUsersWithTasks(userTasksResponse.data.webUsers);
+            setCollaboratorStats(collaboratorStatsResponse.data);
         } catch (error) {
             console.error("Error fetching data:", error);
             setError("Failed to load data.");
@@ -85,10 +85,10 @@ export default function Dashboard({ onToggleDarkMode }) {
                 Dashboard
             </Typography>
             <Grid container spacing={3}>
-                {renderStatCard("Total Projects", projectStats.totalProjects, faProjectDiagram, "#2196f3")}
-                {renderStatCard("Total Tasks", projectStats.totalTasks, faTasks, "#4caf50")}
-                {renderStatCard("Total AS400 Users", projectStats.totalUsers, faUser, "#f44336")}
-                {renderStatCard("Total Web Users", projectStats.totalWeb, faUser, "#ff9800")}
+                {renderStatCard("Total Projects", projectStats.totalProjects, "#2196f3")}
+                {renderStatCard("Total Tasks", projectStats.totalTasks, "#4caf50")}
+                {renderStatCard("Total AS400 Users", projectStats.totalUsers, "#f44336")}
+                {renderStatCard("Total Web Users", projectStats.totalWeb, "#ff9800")}
             </Grid>
             <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
@@ -110,16 +110,16 @@ export default function Dashboard({ onToggleDarkMode }) {
             </Grid>
             <UserTasksSection title="AS400 User Tasks" usersWithTasks={as400UsersWithTasks} darkMode={darkMode} />
             <UserTasksSection title="WEB User Tasks" usersWithTasks={webUsersWithTasks} darkMode={darkMode} />
+            <CollaboratorStatsSection stats={collaboratorStats} darkMode={darkMode} />
         </div>
     );
 }
 
-function renderStatCard(title, value, icon, color) {
+function renderStatCard(title, value, color) {
     return (
         <Grid item xs={12} sm={6} md={3} key={title}>
             <Card className="stat-card" style={{ backgroundColor: color }}>
                 <CardContent>
-                    <FontAwesomeIcon icon={icon} className="stat-icon" />
                     <Typography variant="h6" className="stat-title">{title}</Typography>
                     <Typography variant="subtitle1" className="stat-value">{value}</Typography>
                 </CardContent>
@@ -150,6 +150,32 @@ function UserTasksSection({ title, usersWithTasks, darkMode }) {
                                     ))}
                                 </ul>
                             </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+}
+
+function CollaboratorStatsSection({ stats, darkMode }) {
+    return (
+        <div className={`collaborator-stats-section ${darkMode ? "dark-mode" : ""}`}>
+            <Typography variant="h4" gutterBottom className="section-title">Collaborator Stats</Typography>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Collaborator</th>
+                        <th>Number of Tasks</th>
+                        <th>Number of Projects</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {stats.map((collaborator) => (
+                        <tr key={collaborator.id}>
+                            <td>{collaborator.name}</td>
+                            <td>{collaborator.taskCount}</td>
+                            <td>{collaborator.projectCount}</td>
                         </tr>
                     ))}
                 </tbody>

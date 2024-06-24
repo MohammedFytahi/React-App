@@ -118,7 +118,7 @@ class ProjectController extends Controller
             });
 
             $project->update(['status' => $hasInProgress ? 'in_progress' : 'pending']);
-        }
+        } 
     }
     
 }

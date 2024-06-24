@@ -16,6 +16,7 @@ import {
   TextField,
   Avatar,
   Slide,
+  Divider,
 } from '@mui/material';
 import { styled } from '@mui/system';
 import { Link, useNavigate } from 'react-router-dom';
@@ -46,28 +47,51 @@ const Header = styled(Box)(({ theme }) => ({
 const QuestionCard = styled(Card)(({ theme }) => ({
   width: '100%',
   maxWidth: '800px',
-  marginBottom: theme.spacing(4),
+  marginBottom: theme.spacing(2),
   backgroundColor: '#ffffff',
   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  borderRadius: theme.spacing(1),
+  padding: theme.spacing(2),
+  cursor: 'pointer',
   '&:hover': {
-    transform: 'translateY(-8px)',
-    boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
+    transform: 'translateY(-4px)',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
   },
-  borderRadius: theme.spacing(2),
-  padding: theme.spacing(3),
-  overflow: 'visible',
 }));
 
 const QuestionText = styled(Typography)(({ theme }) => ({
   fontWeight: '500',
   fontSize: '1.2rem',
   color: '#333',
-  marginBottom: theme.spacing(2),
+  marginBottom: theme.spacing(1),
 }));
 
 const UserAvatar = styled(Avatar)(({ theme }) => ({
-  marginRight: theme.spacing(2),
+  width: theme.spacing(5),
+  height: theme.spacing(5),
+  marginRight: theme.spacing(1),
   border: '2px solid #0288d1',
+}));
+
+const Metadata = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: theme.spacing(1),
+}));
+
+const ActionButton = styled(IconButton)(({ theme }) => ({
+  marginLeft: theme.spacing(1),
+  color: '#757575',
+  '&:hover': {
+    color: '#0288d1',
+  },
+}));
+
+const ResponseBox = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  padding: theme.spacing(2),
+  backgroundColor: '#f9f9f9',
+  borderRadius: theme.spacing(1),
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -225,36 +249,49 @@ export default function Questions() {
         <Typography variant="h4" gutterBottom>
           All Questions
         </Typography>
-        <StyledButton variant="contained" component={Link} to="/projects//community-form">
-          Add new
+        <StyledButton variant="contained" component={Link} to="/projects/community-form">
+          Ask Question
         </StyledButton>
       </Header>
       <List>
         {questions.map((question) => (
           <Slide direction="up" in key={question.id}>
-            <QuestionCard elevation={3} onClick={() => handleCardClick(question.id)}>
+            <QuestionCard elevation={1} onClick={() => handleCardClick(question.id)}>
               <CardHeader
                 avatar={<UserAvatar alt={question.user.name} src={question.user.avatarUrl} />}
-                title={question.user.name}
-                subheader={`Asked by: ${question.user.name}`}
+                title={
+                  <Metadata>
+                    <Typography variant="body2" color="textSecondary">
+                      Asked by {question.user.name}
+                    </Typography>
+                  </Metadata>
+                }
+                subheader={
+                  <Metadata>
+                    <Typography variant="body2" color="textSecondary">
+                      {question.created_at ? new Date(question.created_at).toLocaleDateString() : 'Date not available'}
+                    </Typography>
+                  </Metadata>
+                }
                 action={
                   <Box>
                     {currentUser && question.user.id === currentUser.id && (
                       <>
-                        <IconButton onClick={(e) => { e.stopPropagation(); handleEdit(question.id, question.question); }}>
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton onClick={(e) => { e.stopPropagation(); handleDelete(question.id); }}>
-                          <DeleteIcon />
-                        </IconButton>
+                        <ActionButton onClick={(e) => { e.stopPropagation(); handleEdit(question.id, question.question); }}>
+                          <EditIcon fontSize="small" />
+                        </ActionButton>
+                        <ActionButton onClick={(e) => { e.stopPropagation(); handleDelete(question.id); }}>
+                          <DeleteIcon fontSize="small" />
+                        </ActionButton>
                       </>
                     )}
-                    <IconButton onClick={(e) => { e.stopPropagation(); handleAddResponse(question.id); }}>
-                      <AddIcon />
-                    </IconButton>
+                    <ActionButton onClick={(e) => { e.stopPropagation(); handleAddResponse(question.id); }}>
+                      <AddIcon fontSize="small" />
+                    </ActionButton>
                   </Box>
                 }
               />
+              <Divider />
               <CardContent>
                 <QuestionText>{question.question}</QuestionText>
                 {question.responses && question.responses.length > 0 && (
@@ -262,9 +299,9 @@ export default function Questions() {
                     <Typography variant="h6">Responses:</Typography>
                     <List>
                       {question.responses.map((response) => (
-                        <Box key={response.id} mb={1} p={2} bgcolor="#f0f0f0" borderRadius="4px">
+                        <ResponseBox key={response.id}>
                           <Typography variant="body2">{response.response}</Typography>
-                        </Box>
+                        </ResponseBox>
                       ))}
                     </List>
                   </Box>

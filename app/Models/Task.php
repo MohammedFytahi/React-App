@@ -25,4 +25,13 @@ class Task extends Model
     protected $casts = [
         'progress' => 'array',
     ];
+
+    
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
+
+
 }

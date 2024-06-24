@@ -137,7 +137,7 @@ export default function QuestionDetail() {
       </Button>
       <Card style={{ width: '100%', maxWidth: '800px', margin: '20px auto' }}>
         <CardHeader
-          avatar={<Avatar src={question.user.avatarUrl} />}
+          avatar={<Avatar alt={question.user.name} src={question.user.avatarUrl} />}
           title={question.user.name}
           subheader={`Asked by: ${question.user.name}`}
         />
@@ -147,12 +147,12 @@ export default function QuestionDetail() {
             <Box mt={2}>
               <Typography variant="h6">Responses:</Typography>
               {question.responses.map((response) => (
-                <Box key={response.id} mb={1} p={2} bgcolor="#f0f0f0" borderRadius="4px">
+                <Box key={response.id} mb={2} p={2} bgcolor="#f0f0f0" borderRadius="4px">
                   <Typography variant="body2">{response.response}</Typography>
                   <Typography variant="caption" color="textSecondary">
                     - {response.user.name}
                   </Typography>
-                  <Box display="flex" justifyContent="flex-end">
+                  <Box display="flex" justifyContent="flex-end" mt={1}>
                     {currentUser && response.user.id === currentUser.id && (
                       <>
                         <IconButton onClick={() => handleEditResponse(response.id, response.response)}>

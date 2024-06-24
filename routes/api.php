@@ -61,6 +61,8 @@ Route::delete('/community/questions/{question}', [QuestionController::class, 'de
 Route::get('/tasks/statuses', [TaskController::class, 'getStatuses']);
 Route::get('/community/questions/{id}', [QuestionController::class, 'show']);
 
+Route::get('/collaborator-stats', [TaskController::class, 'getCollaboratorStats']);
+
 
 Route::get('/community/questions/{question}/responses', [QuestionController::class, 'getResponses']);
 
