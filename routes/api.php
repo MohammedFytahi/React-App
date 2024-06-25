@@ -6,6 +6,7 @@
     use App\Http\Controllers\Api\TaskController;
     use App\Http\Controllers\Api\TaskUserController;
     use App\Http\Controllers\Api\QuestionController;
+use App\Http\Controllers\Api\UserDashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +51,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/users/web', [UserController::class, 'webUsers']);
 Route::get('/users/{userType}', [UserController::class, 'getUsersByType']);
 
+Route::get('/user-tasks/{userId}', [UserDashboardController::class, 'getUserTasks']);
+
 Route::get('/community/questions', [QuestionController::class, 'index']); 
 Route::get('/questions/project/{projectId}', [QuestionController::class, 'indexByProject']); 
 Route::post('/questions', [QuestionController::class, 'store']); 
@@ -63,6 +66,7 @@ Route::get('/community/questions/{id}', [QuestionController::class, 'show']);
 
 Route::get('/collaborator-stats', [TaskController::class, 'getCollaboratorStats']);
 
+Route::get('/dashboard/{userId}', [UserDashboardController::class, 'getUserDashboard']);
 
 Route::get('/community/questions/{question}/responses', [QuestionController::class, 'getResponses']);
 

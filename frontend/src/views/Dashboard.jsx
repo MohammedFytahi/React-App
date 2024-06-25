@@ -3,8 +3,89 @@ import axiosClient from "../axios-client.js";
 import { CircularProgress, Typography, Grid, Card, CardContent } from "@mui/material";
 import { Bar, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend } from 'chart.js';
+import styled from 'styled-components';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend);
+
+const DashboardContainer = styled.div`
+  padding: 20px;
+  background-color: ${props => (props.darkMode ? '#1c1c1c' : '#f5f5f5')};
+  color: ${props => (props.darkMode ? '#fff' : '#000')};
+  transition: background-color 0.3s, color 0.3s;
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
+const ErrorContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
+const DashboardTitle = styled(Typography)`
+  margin-bottom: 20px;
+  font-weight: bold;
+`;
+
+const StatCard = styled(Card)`
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+`;
+
+const SectionTitle = styled(Typography)`
+  margin: 20px 0;
+  font-weight: bold;
+`;
+
+const TasksSectionContainer = styled.div`
+  margin-top: 20px;
+  background-color: ${props => (props.darkMode ? '#2a2a2a' : '#fff')};
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+`;
+
+const CollaboratorStatsSectionContainer = styled.div`
+  margin-top: 20px;
+  background-color: ${props => (props.darkMode ? '#2a2a2a' : '#fff')};
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+`;
+
+const TableHeader = styled.th`
+  padding: 10px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+  background-color: ${props => (props.darkMode ? '#333' : '#f4f4f4')};
+`;
+
+const TableData = styled.td`
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+`;
+
+const TableRow = styled.tr`
+  &:nth-child(even) {
+    background-color: ${props => (props.darkMode ? '#444' : '#f9f9f9')};
+  }
+`;
 
 export default function Dashboard({ onToggleDarkMode }) {
     const [projectStats, setProjectStats] = useState({});
@@ -41,19 +122,19 @@ export default function Dashboard({ onToggleDarkMode }) {
 
     if (loading) {
         return (
-            <div className="loading-container">
+            <LoadingContainer>
                 <CircularProgress color="primary" size={80} />
-            </div>
+            </LoadingContainer>
         );
     }
 
     if (error) {
         return (
-            <div className="error-container">
+            <ErrorContainer>
                 <Typography variant="h6" color="error">
                     {error}
                 </Typography>
-            </div>
+            </ErrorContainer>
         );
     }
 
@@ -80,10 +161,10 @@ export default function Dashboard({ onToggleDarkMode }) {
     };
 
     return (
-        <div className={`dashboard ${darkMode ? "dark-mode" : ""}`}>
-            <Typography variant="h3" gutterBottom className="dashboard-title">
+        <DashboardContainer darkMode={darkMode}>
+            <DashboardTitle variant="h3" gutterBottom>
                 Dashboard
-            </Typography>
+            </DashboardTitle>
             <Grid container spacing={3}>
                 {renderStatCard("Total Projects", projectStats.totalProjects, "#2196f3")}
                 {renderStatCard("Total Tasks", projectStats.totalTasks, "#4caf50")}
@@ -111,75 +192,79 @@ export default function Dashboard({ onToggleDarkMode }) {
             <UserTasksSection title="AS400 User Tasks" usersWithTasks={as400UsersWithTasks} darkMode={darkMode} />
             <UserTasksSection title="WEB User Tasks" usersWithTasks={webUsersWithTasks} darkMode={darkMode} />
             <CollaboratorStatsSection stats={collaboratorStats} darkMode={darkMode} />
-        </div>
+        </DashboardContainer>
     );
 }
 
 function renderStatCard(title, value, color) {
     return (
         <Grid item xs={12} sm={6} md={3} key={title}>
-            <Card className="stat-card" style={{ backgroundColor: color }}>
+            <StatCard style={{ backgroundColor: color }}>
                 <CardContent>
                     <Typography variant="h6" className="stat-title">{title}</Typography>
                     <Typography variant="subtitle1" className="stat-value">{value}</Typography>
                 </CardContent>
-            </Card>
+            </StatCard>
         </Grid>
     );
 }
 
 function UserTasksSection({ title, usersWithTasks, darkMode }) {
     return (
-        <div className={`tasks-section ${darkMode ? "dark-mode" : ""}`}>
-            <Typography variant="h4" gutterBottom className="section-title">{title}</Typography>
-            <table>
+        <TasksSectionContainer darkMode={darkMode}>
+            <SectionTitle variant="h4" gutterBottom>
+                {title}
+            </SectionTitle>
+            <Table>
                 <thead>
                     <tr>
-                        <th>User</th>
-                        <th>Tasks</th>
+                        <TableHeader darkMode={darkMode}>User</TableHeader>
+                        <TableHeader darkMode={darkMode}>Tasks</TableHeader>
                     </tr>
                 </thead>
                 <tbody>
                     {usersWithTasks.map((user) => (
-                        <tr key={user.id}>
-                            <td>{user.name}</td>
-                            <td>
+                        <TableRow darkMode={darkMode} key={user.id}>
+                            <TableData>{user.name}</TableData>
+                            <TableData>
                                 <ul>
                                     {user.tasks.map((task) => (
                                         <li key={task.id}>{task.name}</li>
                                     ))}
                                 </ul>
-                            </td>
-                        </tr>
+                            </TableData>
+                        </TableRow>
                     ))}
                 </tbody>
-            </table>
-        </div>
+            </Table>
+        </TasksSectionContainer>
     );
 }
 
 function CollaboratorStatsSection({ stats, darkMode }) {
     return (
-        <div className={`collaborator-stats-section ${darkMode ? "dark-mode" : ""}`}>
-            <Typography variant="h4" gutterBottom className="section-title">Collaborator Stats</Typography>
-            <table>
+        <CollaboratorStatsSectionContainer darkMode={darkMode}>
+            <SectionTitle variant="h4" gutterBottom>
+                Collaborator Stats
+            </SectionTitle>
+            <Table>
                 <thead>
                     <tr>
-                        <th>Collaborator</th>
-                        <th>Number of Tasks</th>
-                        <th>Number of Projects</th>
+                        <TableHeader darkMode={darkMode}>Collaborator</TableHeader>
+                        <TableHeader darkMode={darkMode}>Number of Tasks</TableHeader>
+                       
                     </tr>
                 </thead>
                 <tbody>
                     {stats.map((collaborator) => (
-                        <tr key={collaborator.id}>
-                            <td>{collaborator.name}</td>
-                            <td>{collaborator.taskCount}</td>
-                            <td>{collaborator.projectCount}</td>
-                        </tr>
+                        <TableRow darkMode={darkMode} key={collaborator.id}>
+                            <TableData>{collaborator.name}</TableData>
+                            <TableData>{collaborator.taskCount}</TableData>
+                            
+                        </TableRow>
                     ))}
                 </tbody>
-            </table>
-        </div>
+            </Table>
+        </CollaboratorStatsSectionContainer>
     );
 }

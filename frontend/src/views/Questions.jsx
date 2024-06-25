@@ -249,7 +249,7 @@ export default function Questions() {
         <Typography variant="h4" gutterBottom>
           All Questions
         </Typography>
-        <StyledButton variant="contained" component={Link} to="/projects/community-form">
+        <StyledButton variant="contained" component={Link} to="/projects//community-form">
           Ask Question
         </StyledButton>
       </Header>

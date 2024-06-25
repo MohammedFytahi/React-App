@@ -11,8 +11,9 @@ class QuestionController extends Controller
 {
     public function index()
     {
-        return Question::with('user' )->get();
+        return Question::with('user')->orderBy('created_at', 'desc')->get();
     }
+        
 
     public function indexByProject($projectId)
     {

@@ -5,8 +5,8 @@ import { useStateContext } from "../context/ContextProvider.jsx";
 
 export default function ProjectForm() {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { user } = useStateContext();
+  const { id } = useParams(); // Extract project ID from URL parameters
+  const { user, setNotification } = useStateContext(); // Destructure setNotification from useStateContext
   const [project, setProject] = useState({
     id: null,
     name: "",
@@ -18,7 +18,6 @@ export default function ProjectForm() {
   });
   const [errors, setErrors] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { setNotification } = useStateContext();
 
   useEffect(() => {
     if (id) {
@@ -27,7 +26,7 @@ export default function ProjectForm() {
         .get(`/projects/${id}`)
         .then(({ data }) => {
           setLoading(false);
-          setProject(data);
+          setProject(data.data); // Use data.data to access the project data
         })
         .catch(() => {
           setLoading(false);
@@ -38,12 +37,12 @@ export default function ProjectForm() {
   const onSubmit = (ev) => {
     ev.preventDefault();
     const projectData = { ...project, user_id: user.id };
-    const url = project.id ? `/projects/${project.id}` : "/projects";
-    const method = project.id ? "put" : "post";
+    const url = id ? `/projects/${id}` : "/projects";
+    const method = id ? "put" : "post";
 
     axiosClient[method](url, projectData)
       .then(() => {
-        const message = project.id ? "Project was successfully updated" : "Project was successfully created";
+        const message = id ? "Project was successfully updated" : "Project was successfully created";
         setNotification(message);
         navigate("/projects");
       })
@@ -57,8 +56,8 @@ export default function ProjectForm() {
 
   return (
     <>
-      {project.id && <h1>Update Project: {project.name}</h1>}
-      {!project.id && <h1>New Project</h1>}
+      {id && <h1>Update Project: {project.name}</h1>}
+      {!id && <h1>New Project</h1>}
       <div className="card animated fadeInDown">
         {loading && <div className="text-center">Loading...</div>}
         {errors && (
@@ -72,26 +71,17 @@ export default function ProjectForm() {
           <form onSubmit={onSubmit}>
             <input
               value={project.name}
-              onChange={(ev) =>
-                setProject({ ...project, name: ev.target.value })
-              }
+              onChange={(ev) => setProject({ ...project, name: ev.target.value })}
               placeholder="Name"
             />
             <input
               value={project.description}
-              onChange={(ev) =>
-                setProject({ ...project, description: ev.target.value })
-              }
+              onChange={(ev) => setProject({ ...project, description: ev.target.value })}
               placeholder="Description"
             />
             <select
               value={project.techno}
-              onChange={(ev) =>
-                setProject({
-                  ...project,
-                  techno: ev.target.value.toLowerCase(),
-                })
-              }
+              onChange={(ev) => setProject({ ...project, techno: ev.target.value.toLowerCase() })}
               required
             >
               <option value="">Select Techno</option>
@@ -103,17 +93,13 @@ export default function ProjectForm() {
             <input
               type="date"
               value={project.start_date}
-              onChange={(ev) =>
-                setProject({ ...project, start_date: ev.target.value })
-              }
+              onChange={(ev) => setProject({ ...project, start_date: ev.target.value })}
               required
             />
             <input
               type="date"
               value={project.end_date}
-              onChange={(ev) =>
-                setProject({ ...project, end_date: ev.target.value })
-              }
+              onChange={(ev) => setProject({ ...project, end_date: ev.target.value })}
               required
             />
             <button className="btn">Save</button>

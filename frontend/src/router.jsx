@@ -19,6 +19,7 @@ import CommunityPage from "./views/CommunityPage.jsx";
 import CommunityForm from "./views/CommunityForm.jsx";
 import Questions from "./views/Questions.jsx";
 import QuestionDetail from './views/QuestionDetail';
+import UserDashboard from "./views/UserDashboard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,11 @@ const router = createBrowserRouter([
       {
         path: '/tasks',
         element: <Tasks />
+      },
+
+      {
+        path: '/dash',
+        element: <UserDashboard /> 
       },
       {
         path: '/tasks/new',

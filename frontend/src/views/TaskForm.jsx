@@ -5,7 +5,7 @@ import { useStateContext } from "../context/ContextProvider.jsx";
 
 export default function TaskForm() {
   const navigate = useNavigate();
-  const { id: projectId } = useParams();
+  const { id: taskId } = useParams(); // Note: useParams to get task ID
   const { user } = useStateContext();
   const [task, setTask] = useState({
     id: null,
@@ -13,7 +13,7 @@ export default function TaskForm() {
     description: "",
     start_date: "",
     end_date: "",
-    project_id: projectId || "",
+    project_id: "",
     user_id: user.id,
   });
   const [projects, setProjects] = useState([]);
@@ -33,19 +33,19 @@ export default function TaskForm() {
   }, []);
 
   useEffect(() => {
-    if (task.id) {
+    if (taskId) {
       setLoading(true);
       axiosClient
-        .get(`/tasks/${task.id}`)
+        .get(`/tasks/${taskId}`)
         .then(({ data }) => {
           setLoading(false);
-          setTask(data);
+          setTask(data.data); // Corrected: use data.data to access task data
         })
         .catch(() => {
           setLoading(false);
         });
     }
-  }, [task.id]);
+  }, [taskId]);
 
   useEffect(() => {
     if (task.project_id) {
@@ -77,12 +77,12 @@ export default function TaskForm() {
     }
 
     const taskData = { ...task, user_id: user.id };
-    const url = task.id ? `/tasks/${task.id}` : "/tasks";
-    const method = task.id ? "put" : "post";
+    const url = taskId ? `/tasks/${taskId}` : "/tasks";
+    const method = taskId ? "put" : "post";
 
     axiosClient[method](url, taskData)
       .then(() => {
-        const message = task.id ? "Task was successfully updated" : "Task was successfully created";
+        const message = taskId ? "Task was successfully updated" : "Task was successfully created";
         setNotification(message);
         navigate("/tasks");
       })
@@ -96,8 +96,8 @@ export default function TaskForm() {
 
   return (
     <>
-      {task.id && <h1>Update Task: {task.name}</h1>}
-      {!task.id && <h1>New Task</h1>}
+      {taskId && <h1>Update Task: {task.name}</h1>}
+      {!taskId && <h1>New Task</h1>}
       <div className="card animated fadeInDown">
         {loading && <div className="text-center">Loading...</div>}
         {errors && (
@@ -138,7 +138,7 @@ export default function TaskForm() {
                 <option key={project.id} value={project.id}>{project.name}</option>
               ))}
             </select>
-            <button className="btn">{task.id ? 'Update Task' : 'Add Task'}</button>
+            <button className="btn">{taskId ? 'Update Task' : 'Add Task'}</button>
           </form>
         )}
       </div>
