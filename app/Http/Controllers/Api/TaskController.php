@@ -102,50 +102,51 @@ class TaskController extends Controller
             $as400UsersWithTasks = DB::table('users')
                 ->join('task_user', 'users.id', '=', 'task_user.as400_user_id')
                 ->join('tasks', 'task_user.task_id', '=', 'tasks.id')
-                ->select('users.id as user_id', 'users.name as user_name', 'tasks.id as task_id', 'tasks.name as task_name')
+                ->select('users.id as user_id', 'users.name as user_name', 'tasks.id as task_id', 'tasks.name as task_name', 'tasks.as400_status as task_status')
                 ->get()
                 ->groupBy('user_id');
-
+    
             $webUsersWithTasks = DB::table('users')
                 ->join('task_user', 'users.id', '=', 'task_user.web_user_id')
                 ->join('tasks', 'task_user.task_id', '=', 'tasks.id')
-                ->select('users.id as user_id', 'users.name as user_name', 'tasks.id as task_id', 'tasks.name as task_name')
+                ->select('users.id as user_id', 'users.name as user_name', 'tasks.id as task_id', 'tasks.name as task_name', 'tasks.status as task_status')
                 ->get()
                 ->groupBy('user_id');
-
+    
             $formattedAs400Data = [];
             foreach ($as400UsersWithTasks as $userId => $tasks) {
                 $userName = $tasks->first()->user_name;
                 $taskList = $tasks->map(function ($task) {
-                    return ['id' => $task->task_id, 'name' => $task->task_name];
+                    return ['id' => $task->task_id, 'name' => $task->task_name, 'status' => $task->task_status];
                 })->toArray();
-
+    
                 $formattedAs400Data[] = [
                     'id' => $userId,
                     'name' => $userName,
                     'tasks' => $taskList
                 ];
             }
-
+    
             $formattedWebData = [];
             foreach ($webUsersWithTasks as $userId => $tasks) {
                 $userName = $tasks->first()->user_name;
                 $taskList = $tasks->map(function ($task) {
-                    return ['id' => $task->task_id, 'name' => $task->task_name];
+                    return ['id' => $task->task_id, 'name' => $task->task_name, 'status' => $task->task_status];
                 })->toArray();
-
+    
                 $formattedWebData[] = [
                     'id' => $userId,
                     'name' => $userName,
                     'tasks' => $taskList
                 ];
             }
-
+    
             return response()->json(['as400Users' => $formattedAs400Data, 'webUsers' => $formattedWebData], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch user tasks', 'message'  => $e->getMessage()], 500);
         }
     }
+    
 
     public function updateStatus(Request $request, $id)
     {
@@ -222,32 +223,40 @@ class TaskController extends Controller
 
 
     public function getCollaboratorStats()
-{
-    try {
-        $collaborators = User::where('role', 'collaborator')->get();
+    {
+        try {
+      
+            $collaborators = User::where('role', 'collaborator')->get();
+    
+           
+            $collaboratorStats = $collaborators->map(function ($collaborator) {
+                $taskCount = DB::table('task_user')
+                    ->where(function ($query) use ($collaborator) {
+                        $query->where('web_user_id', $collaborator->id)
+                              ->orWhere('as400_user_id', $collaborator->id);
+                    })
+                    ->count();
+    
 
-        $collaboratorStats = $collaborators->map(function ($collaborator) {
-            $taskCount = DB::table('task_user')
-                ->where('web_user_id', $collaborator->id)
-                ->count();
+                $projectCount = Project::whereHas('tasks', function ($query) use ($collaborator) {
+                    $query->where('user_id', $collaborator->id);
+                })->count();
+    
+                return [
+                    'id' => $collaborator->id,
+                    'name' => $collaborator->name,
+                    'taskCount' => $taskCount,
+                    'projectCount' => $projectCount,
+                ];
+            });
+    
 
-            $projectCount = Project::whereHas('tasks', function ($query) use ($collaborator) {
-                $query->where('user_id', $collaborator->id);
-            })->count();
-
-            return [
-                'id' => $collaborator->id,
-                'name' => $collaborator->name,
-                'taskCount' => $taskCount,
-                'projectCount' => $projectCount,
-            ];
-        });
-
-        return response()->json($collaboratorStats);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Failed to fetch collaborator stats', 'message' => $e->getMessage()], 500);
+            return response()->json($collaboratorStats);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch collaborator stats', 'message' => $e->getMessage()], 500);
+        }
     }
-}
+    
 
 
     

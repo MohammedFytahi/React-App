@@ -18,7 +18,17 @@ class UserController extends Controller
      */
     public function index()
     {
-        return UserResource::collection(User::query()->orderBy('id', 'asc')->paginate(20));
+        return UserResource::collection(User::query()->orderBy('id', 'asc')->paginate(6));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function showUser()
+    {
+        return UserResource::collection(User::query()->orderBy('id', 'asc'));
     }
 
     /**

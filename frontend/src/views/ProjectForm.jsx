@@ -5,8 +5,8 @@ import { useStateContext } from "../context/ContextProvider.jsx";
 
 export default function ProjectForm() {
   const navigate = useNavigate();
-  const { id } = useParams(); // Extract project ID from URL parameters
-  const { user, setNotification } = useStateContext(); // Destructure setNotification from useStateContext
+  const { id } = useParams();
+  const { user, setNotification } = useStateContext();
   const [project, setProject] = useState({
     id: null,
     name: "",
@@ -26,7 +26,7 @@ export default function ProjectForm() {
         .get(`/projects/${id}`)
         .then(({ data }) => {
           setLoading(false);
-          setProject(data.data); // Use data.data to access the project data
+          setProject(data.data);
         })
         .catch(() => {
           setLoading(false);
@@ -55,57 +55,90 @@ export default function ProjectForm() {
   };
 
   return (
-    <>
-      {id && <h1>Update Project: {project.name}</h1>}
-      {!id && <h1>New Project</h1>}
-      <div className="card animated fadeInDown">
-        {loading && <div className="text-center">Loading...</div>}
-        {errors && (
-          <div className="alert">
-            {Object.keys(errors).map((key) => (
-              <p key={key}>{errors[key][0]}</p>
-            ))}
+    <div className="container mt-4">
+      <div className="row justify-content-center">
+        <div className="col-md-8">
+          <div className="card">
+            <div className="card-header">
+              {id ? <h1 className="card-title">Update Project: {project.name}</h1> : <h1 className="card-title">New Project</h1>}
+            </div>
+            <div className="card-body">
+              {loading && <div className="text-center">Loading...</div>}
+              {errors && (
+                <div className="alert alert-danger">
+                  {Object.keys(errors).map((key) => (
+                    <p key={key}>{errors[key][0]}</p>
+                  ))}
+                </div>
+              )}
+              {!loading && (
+                <form onSubmit={onSubmit}>
+                  <div className="form-group">
+                    <label htmlFor="name">Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="name"
+                      value={project.name}
+                      onChange={(ev) => setProject({ ...project, name: ev.target.value })}
+                      placeholder="Enter name"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="description">Description</label>
+                    <input
+                      className="form-control"
+                      id="description"
+                      value={project.description}
+                      onChange={(ev) => setProject({ ...project, description: ev.target.value })}
+                      placeholder="Enter description"
+                      rows="3"
+                    ></input>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="techno">Techno</label>
+                    <select
+                      className="form-control"
+                      id="techno"
+                      value={project.techno}
+                      onChange={(ev) => setProject({ ...project, techno: ev.target.value.toLowerCase() })}
+                      required
+                    >
+                      <option value="">Select Techno</option>
+                      <option value="web">Web</option>
+                      <option value="mobile">Mobile</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="start_date">Start Date</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="start_date"
+                      value={project.start_date}
+                      onChange={(ev) => setProject({ ...project, start_date: ev.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="end_date">End Date</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="end_date"
+                      value={project.end_date}
+                      onChange={(ev) => setProject({ ...project, end_date: ev.target.value })}
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-primary">Save</button>
+                </form>
+              )}
+            </div>
           </div>
-        )}
-        {!loading && (
-          <form onSubmit={onSubmit}>
-            <input
-              value={project.name}
-              onChange={(ev) => setProject({ ...project, name: ev.target.value })}
-              placeholder="Name"
-            />
-            <input
-              value={project.description}
-              onChange={(ev) => setProject({ ...project, description: ev.target.value })}
-              placeholder="Description"
-            />
-            <select
-              value={project.techno}
-              onChange={(ev) => setProject({ ...project, techno: ev.target.value.toLowerCase() })}
-              required
-            >
-              <option value="">Select Techno</option>
-              <option value="web">Web</option>
-              <option value="mobile">Mobile</option>
-            </select>
-
-            <input type="hidden" name="user_id" value={user.id} />
-            <input
-              type="date"
-              value={project.start_date}
-              onChange={(ev) => setProject({ ...project, start_date: ev.target.value })}
-              required
-            />
-            <input
-              type="date"
-              value={project.end_date}
-              onChange={(ev) => setProject({ ...project, end_date: ev.target.value })}
-              required
-            />
-            <button className="btn">Save</button>
-          </form>
-        )}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
