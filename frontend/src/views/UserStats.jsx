@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import axiosClient from "../axios-client.js";
 import { CircularProgress, Typography, Card, CardContent } from "@mui/material";
 import styled from 'styled-components';
+import { Bar, Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(BarElement, CategoryScale, LinearScale, ArcElement, Tooltip, Legend);
 
 const UserStatsContainer = styled.div`
     margin-top: 20px;
@@ -20,7 +24,7 @@ const SectionTitle = styled(Typography)`
 const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;   
+    margin-top: 10px;
 `;
 
 const TableHeader = styled.th`
@@ -54,6 +58,19 @@ const ErrorContainer = styled.div`
     justify-content: center;
     align-items: center;
     height: 100vh;
+`;
+
+const ChartContainer = styled.div`
+    width: 400px;
+    height: 300px;
+    margin: auto;
+`;
+
+const FlexContainer = styled.div`
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    gap: 20px; // Espacement entre les cartes
 `;
 
 export default function UserStats({ darkMode }) {
@@ -96,11 +113,46 @@ export default function UserStats({ darkMode }) {
         );
     }
 
+    const barData = {
+        labels: ['Total Tasks', 'Total Questions', 'Total Responses'],
+        datasets: [{
+            label: 'Count',
+            data: [userStats.totalTasks, userStats.totalQuestions, userStats.totalResponses],
+            backgroundColor: ['#2196f3', '#4caf50', '#ff9800'],
+        }],
+    };
+
+    const doughnutData = {
+        labels: ['Total Tasks', 'Total Questions', 'Total Responses'],
+        datasets: [{
+            data: [userStats.totalTasks, userStats.totalQuestions, userStats.totalResponses],
+            backgroundColor: ['#2196f3', '#4caf50', '#ff9800'],
+        }],
+    };
+
     return (
         <UserStatsContainer darkMode={darkMode}>
             <SectionTitle variant="h4" gutterBottom>
                 User Statistics
             </SectionTitle>
+            <FlexContainer>
+                <Card>
+                    <CardContent>
+                        <Typography variant="h5">User Statistics Chart</Typography>
+                        <ChartContainer>
+                            <Bar data={barData} options={{ maintainAspectRatio: false }} />
+                        </ChartContainer>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardContent>
+                        <Typography variant="h5">User Statistics Distribution</Typography>
+                        <ChartContainer>
+                            <Doughnut data={doughnutData} options={{ maintainAspectRatio: false }} />
+                        </ChartContainer>
+                    </CardContent>
+                </Card>
+            </FlexContainer>
             <Table>
                 <thead>
                     <tr>
