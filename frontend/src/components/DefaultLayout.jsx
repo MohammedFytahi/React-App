@@ -58,14 +58,16 @@ export default function DefaultLayout() {
     const icon = darkMode ? faSun : faMoon;
 
     const menuItems = [
-        { text: 'Dashboard', icon: faTachometerAlt, path: '/dashboard' },
+        { text: 'Dashboard', icon: faTachometerAlt, path: '/dashboard', role: 'manager' },
+        { text: 'Dashboard', icon: faTachometerAlt, path: '/dash', role: 'collaborator' },
         { text: 'Projects', icon: faFolder, path: '/projects', role: 'manager' },
         { text: 'Users', icon: faUser, path: '/users' },
         { text: 'Tasks', icon: faTasks, path: '/tasks', role: 'manager' },
         { text: 'My tasks', icon: faTasks, path: '/usertask', role: 'collaborator' },
         { text: 'Community', icon: faTasks, path: '/questions' }
     ];
-
+    
+    const filteredMenuItems = menuItems.filter(item => !item.role || item.role === user.role);
     if (!token) {
         return <Navigate to="/login" />;
     }

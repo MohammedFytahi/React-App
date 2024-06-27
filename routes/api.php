@@ -65,10 +65,12 @@ Route::get('/tasks/statuses', [TaskController::class, 'getStatuses']);
 Route::get('/community/questions/{id}', [QuestionController::class, 'show']);
 
 Route::get('/collaborator-stats', [TaskController::class, 'getCollaboratorStats']);
+Route::get('/user-stats', [ProjectController::class, 'getUserStats']);
 
 Route::get('/dashboard/{userId}', [UserDashboardController::class, 'getUserDashboard']);
 
 Route::get('/community/questions/{question}/responses', [QuestionController::class, 'getResponses']);
+
 
     });
     Route::get('/test-email', function () {

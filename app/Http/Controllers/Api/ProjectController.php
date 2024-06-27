@@ -7,6 +7,8 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
+use App\Models\Question;
+use App\Models\Response;
 use App\Models\Task;
 use App\Models\User;
 
@@ -103,6 +105,22 @@ class ProjectController extends Controller
             'totalWeb' => $totalWeb,
         ]);
     }
+
+
+    public function getUserStats()
+    {
+        $userId = auth()->id();
+        $totalTasks = Task::where('user_id', $userId)->count();
+        $totalQuestions = Question::where('user_id', $userId)->count();
+        $totalResponses = Response::where('user_id', $userId)->count();
+    
+        return response()->json([
+            'totalTasks' => $totalTasks,
+            'totalQuestions' => $totalQuestions,
+            'totalResponses' => $totalResponses,
+        ]);
+    }
+    
 
     private function updateProjectStatus(Project $project)
     {
