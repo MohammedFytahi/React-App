@@ -11,6 +11,7 @@ use App\Models\Question;
 use App\Models\Response;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class ProjectController extends Controller
 {
@@ -110,7 +111,13 @@ class ProjectController extends Controller
     public function getUserStats()
     {
         $userId = auth()->id();
-        $totalTasks = Task::where('user_id', $userId)->count();
+        $totalTasks = DB::table('task_user')
+            ->where(function ($query) use ($userId) {
+                $query->where('web_user_id', $userId)
+                      ->orWhere('as400_user_id', $userId);
+            })
+            ->count();
+
         $totalQuestions = Question::where('user_id', $userId)->count();
         $totalResponses = Response::where('user_id', $userId)->count();
     
