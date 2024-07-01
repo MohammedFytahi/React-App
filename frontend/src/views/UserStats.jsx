@@ -70,7 +70,7 @@ const FlexContainer = styled.div`
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
-    gap: 20px; // Espacement entre les cartes
+    gap: 20px; 
 `;
 
 export default function UserStats({ darkMode }) {

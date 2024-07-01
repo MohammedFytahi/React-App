@@ -30,7 +30,7 @@ export default function CommunityForm() {
       .then(({ data }) => {
         setProjects(data.data);
         if (data.data.length > 0) {
-          setSelectedProject(data.data[0].id); // Set default selected project
+          setSelectedProject(data.data[0].id); 
         }
       })
       .catch((error) => {

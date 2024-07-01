@@ -77,7 +77,7 @@ export default function CollaboratorTasks() {
   }, []);
 
   const handleTimeChange = (taskId, dayIndex, value) => {
-    // Implement the logic to update the time for a specific day
+
     console.log(`Updating task ${taskId}, day ${dayIndex} with value ${value}`);
   };
 

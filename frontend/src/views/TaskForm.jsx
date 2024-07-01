@@ -5,7 +5,7 @@ import { useStateContext } from "../context/ContextProvider.jsx";
 
 export default function TaskForm() {
   const navigate = useNavigate();
-  const { id: taskId } = useParams(); // Note: useParams to get task ID
+  const { id: taskId } = useParams(); 
   const { user } = useStateContext();
   const [task, setTask] = useState({
     id: null,
@@ -39,7 +39,7 @@ export default function TaskForm() {
         .get(`/tasks/${taskId}`)
         .then(({ data }) => {
           setLoading(false);
-          setTask(data.data); // Corrected: use data.data to access task data
+          setTask(data.data);
         })
         .catch(() => {
           setLoading(false);
@@ -62,7 +62,7 @@ export default function TaskForm() {
   const onSubmit = (ev) => {
     ev.preventDefault();
 
-    // Validation des dates
+    
     if (task.start_date < projectDates.start_date || task.start_date > projectDates.end_date) {
       setErrors({ start_date: ["Start date must be within the project's date range."] });
       return;
@@ -131,7 +131,7 @@ export default function TaskForm() {
               onChange={(ev) => setTask({ ...task, end_date: ev.target.value })}
               required
             />
-            {/* Sélecteur de projet */}
+         
             <select value={task.project_id} onChange={(ev) => setTask({ ...task, project_id: ev.target.value })}>
               <option value="">Select Project</option>
               {projects.map(project => (

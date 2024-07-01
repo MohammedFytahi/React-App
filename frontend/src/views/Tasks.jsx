@@ -118,13 +118,13 @@ export default function Tasks() {
     axiosClient
       .get("/users")
       .then(({ data }) => {
-        console.log("Users fetched: ", data.data); // Log for debugging
+        console.log("Users fetched: ", data.data); 
         const as400Users = data.data.filter(
           (user) => user.user_type === "AS400"
         );
         const webUsers = data.data.filter((user) => user.user_type === "WEB");
-        console.log("AS400 Users: ", as400Users); // Log for debugging
-        console.log("WEB Users: ", webUsers); // Log for debugging
+        console.log("AS400 Users: ", as400Users); 
+        console.log("WEB Users: ", webUsers); 
         setAs400Users(as400Users);
         setWebUsers(webUsers);
         setAssigningTask(task);
